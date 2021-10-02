@@ -2,7 +2,7 @@
 ## Heroku Deployment 💜
 The easy way to host this bot, deploy to Heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kurd-bots/musicar)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/ssssfssssfssssfs/ssssfssssfssssf)
 
 
 
@@ -20,9 +20,9 @@ The easy way to host this bot, deploy to Heroku
 
 `npm i -g npm`
 
-`git clone https://github.com/kurd-bots/musicar` # Clone your repo.
+`git clone https://github.com/ssssfssssfssssfs/ssssfssssfssssf` # Clone your repo.
 
-`cd musicar ` #name repo
+`cd ssssfssssfssssf` #name repo
 
 `pip3 install -U -r requirements.txt`
 
