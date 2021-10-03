@@ -20,13 +20,14 @@ The easy way to host this bot, deploy to Heroku
 
 `npm i -g npm`
 
-`git clone https://github.com/ssssfssssfssssfs/music` 
+`git clone https://github.com/ssssfssssfssssfs/musicv` 
 
-`cd music` 
+`cd musicv` 
 
 `pip3 install -U -r requirements.txt`
 
 `cp example.env .env` 
 
 `vim .env` 
+
 `python3 main.py` 
