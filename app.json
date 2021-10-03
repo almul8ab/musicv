@@ -52,7 +52,7 @@
         "OWNER_NAME": {
             "description": "fill with your username without @",
             "required": false,
-            "value": "dlwrml"
+            "value": "hama_refaat"
         },
         "API_ID": {
             "description": "your Api ID from my.telegram.org/apps",
