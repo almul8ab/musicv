@@ -20,14 +20,13 @@ The easy way to host this bot, deploy to Heroku
 
 `npm i -g npm`
 
-`git clone https://github.com/ssssfssssfssssfs/ssssfssssfssssf` # Clone your repo.
+`git clone https://github.com/ssssfssssfssssfs/music` 
 
-`cd ssssfssssfssssf` #name repo
+`cd music` 
 
 `pip3 install -U -r requirements.txt`
 
-`cp example.env .env` #Use vim to edit ENVs
+`cp example.env .env` 
 
-`vim .env` #Fill up your ENVs ( Steps press i to enter in insert mode then edit the file. Press Esc to exit the editing mode then type :wq! and press Enter key to save the file.)
-
-`python3 main.py` # Run the bot
+`vim .env` 
+`python3 main.py` 
