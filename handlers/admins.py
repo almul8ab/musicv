@@ -289,3 +289,177 @@ async def cbskip(_, query: CallbackQuery):
         "⏭ **لقد تخطيت الأغنية التالية**", reply_markup=BACK_BUTTON
     )
 
+# ban & unban function
+
+
+@Client.on_message(filters.command("b", COMMAND_PREFIXES))
+@authorized_users_only
+async def ban_user(_, message):
+    is_admin = await admin_check(message)
+    if not is_admin:
+        return
+
+    user_id, user_first_name = extract_user(message)
+
+    try:
+        await message.chat.kick_member(user_id=user_id)
+    except Exception as error:
+        await message.reply_text(str(error))
+    else:
+        if str(user_id).lower().startswith("@"):
+            await message.reply_text(
+                "✅ successfully banned " f"{user_first_name}" " from this group !"
+            )
+        else:
+            await message.reply_text(
+                "✅ banned "
+                f"<a href='tg://user?id={user_id}'>"
+                f"{user_first_name}"
+                "</a>"
+                " from this group !"
+            )
+
+
+@Client.on_message(filters.command("tb", COMMAND_PREFIXES))
+@authorized_users_only
+async def temp_ban_user(_, message):
+    is_admin = await admin_check(message)
+    if not is_admin:
+        return
+
+    if len(message.command) <= 1:
+        return
+
+    user_id, user_first_name = extract_user(message)
+
+    until_date_val = extract_time(message.command[1])
+    if until_date_val is None:
+        await message.reply_text(
+            (
+                "the specified time type is invalid. " "use m, h, or d, format time: {}"
+            ).format(message.command[1][-1])
+        )
+        return
+
+    try:
+        await message.chat.kick_member(user_id=user_id, until_date=until_date_val)
+    except Exception as error:
+        await message.reply_text(str(error))
+    else:
+        if str(user_id).lower().startswith("@"):
+            await message.reply_text(
+                "✅ temporarily banned "
+                f"{user_first_name}"
+                f" for {message.command[1]}!"
+            )
+        else:
+            await message.reply_text(
+                "✅ temporarily banned "
+                f"<a href='tg://user?id={user_id}'>"
+                "from this group, "
+                "</a>"
+                f" for {message.command[1]}!"
+            )
+
+
+@Client.on_message(filters.command(["ub", "um"], COMMAND_PREFIXES))
+@authorized_users_only
+async def un_ban_user(_, message):
+    is_admin = await admin_check(message)
+    if not is_admin:
+        return
+
+    user_id, user_first_name = extract_user(message)
+
+    try:
+        await message.chat.unban_member(user_id=user_id)
+    except Exception as error:
+        await message.reply_text(str(error))
+    else:
+        if str(user_id).lower().startswith("@"):
+            await message.reply_text(
+                "✅ ok accepted, user "
+                f"{user_first_name} can"
+                " join to this group again!"
+            )
+        else:
+            await message.reply_text(
+                "✅ ok, now "
+                f"<a href='tg://user?id={user_id}'>"
+                f"{user_first_name}"
+                "</a> is not"
+                " restricted again!"
+            )
+
+
+@Client.on_message(filters.command("m", COMMAND_PREFIXES))
+async def mute_user(_, message):
+    is_admin = await admin_check(message)
+    if not is_admin:
+        return
+
+    user_id, user_first_name = extract_user(message)
+
+    try:
+        await message.chat.restrict_member(
+            user_id=user_id, permissions=ChatPermissions()
+        )
+    except Exception as error:
+        await message.reply_text(str(error))
+    else:
+        if str(user_id).lower().startswith("@"):
+            await message.reply_text(
+                "✅ okay,🏻 " f"{user_first_name}" " successfully muted !"
+            )
+        else:
+            await message.reply_text(
+                "🏻✅ okay, "
+                f"<a href='tg://user?id={user_id}'>"
+                "now is"
+                "</a>"
+                " muted !"
+            )
+
+
+@Client.on_message(filters.command("tm", COMMAND_PREFIXES))
+async def temp_mute_user(_, message):
+    is_admin = await admin_check(message)
+    if not is_admin:
+        return
+
+    if len(message.command) <= 1:
+        return
+
+    user_id, user_first_name = extract_user(message)
+
+    until_date_val = extract_time(message.command[1])
+    if until_date_val is None:
+        await message.reply_text(
+            (
+                "The specified time type is invalid. " "use m, h, or d, format time: {}"
+            ).format(message.command[1][-1])
+        )
+        return
+
+    try:
+        await message.chat.restrict_member(
+            user_id=user_id, permissions=ChatPermissions(), until_date=until_date_val
+        )
+    except Exception as error:
+        await message.reply_text(str(error))
+    else:
+        if str(user_id).lower().startswith("@"):
+            await message.reply_text(
+                "Muted for a while! "
+                f"{user_first_name}"
+                f" muted for {message.command[1]}!"
+            )
+        else:
+            await message.reply_text(
+                "Muted for a while! "
+                f"<a href='tg://user?id={user_id}'>"
+                "is"
+                "</a>"
+                " now "
+                f" muted, for {message.command[1]}!"
+            )
