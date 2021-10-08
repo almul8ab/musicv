@@ -23,7 +23,6 @@ ASSISTANT_NAME = getenv("ASSISTANT_NAME", "amortassistantar")
 GROUP_SUPPORT = getenv("GROUP_SUPPORT", "kurd_botschat")
 UPDATES_CHANNEL = getenv("UPDATES_CHANNEL", "amortmusic")
 OWNER_NAME = getenv("OWNER_NAME", "hama_refaat") # isi dengan username kamu tanpa simbol @
-PMPERMIT = getenv("PMPERMIT", "ENABLE")
 OWNER_ID = int(os.environ.get("OWNER_ID")) # fill with your id as the owner of the bot
 DATABASE_URL = os.environ.get("DATABASE_URL") # fill with your mongodb url
 LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL")) # make a private channel and get the channel id
