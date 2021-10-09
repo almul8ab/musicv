@@ -1,146 +1,150 @@
+import os
 from time import time
+from sys import version_info
 from datetime import datetime
-from config import BOT_USERNAME, BOT_NAME, ASSISTANT_NAME, OWNER_NAME, UPDATES_CHANNEL, GROUP_SUPPORT
-from helpers.filters import command
+
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
+from pyrogram import __version__ as __pyro_version__
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+
+from config import BOT_NAME, BOT_USERNAME, GROUP_SUPPORT, OWNER_NAME, UPDATES_CHANNEL, AMORT_NAME, AMORT_IMG
 from helpers.decorators import sudo_users_only
+from helpers.filters import command
+from handlers import __version__
+
+
+__major__ = 0
+__minor__ = 2
+__micro__ = 1
+
+__python_version__ = f"{version_info[0]}.{version_info[1]}.{version_info[2]}"
 
 
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.replace(microsecond=0).isoformat()
 TIME_DURATION_UNITS = (
-    ('week', 60 * 60 * 24 * 7),
-    ('day', 60 * 60 * 24),
-    ('hour', 60 * 60),
-    ('min', 60),
-    ('sec', 1)
+    ("week", 60 * 60 * 24 * 7),
+    ("day", 60 * 60 * 24),
+    ("hour", 60 * 60),
+    ("min", 60),
+    ("sec", 1),
 )
+
 
 async def _human_time_duration(seconds):
     if seconds == 0:
-        return 'inf'
+        return "inf"
     parts = []
     for unit, div in TIME_DURATION_UNITS:
         amount, seconds = divmod(int(seconds), div)
         if amount > 0:
-            parts.append('{} {}{}'
-                         .format(amount, unit, "" if amount == 1 else "s"))
-    return ', '.join(parts)
+            parts.append("{} {}{}".format(amount, unit, "" if amount == 1 else "s"))
+    return ", ".join(parts)
 
 
-@Client.on_message(command(["start", f"start@{BOT_USERNAME}"]) & filters.private & ~filters.edited)
+@Client.on_message(
+    command(["start", f"start@{BOT_USERNAME}"]) & filters.private & ~filters.edited
+)
 async def start_(client: Client, message: Message):
     await message.reply_text(
-        f"""b> 🎪 ** مرحبًا {message.from_user.first_name} ** \ n
-🎪 ** [{BOT_NAME}] (https://t.me/ {BOT_USERNAME}) يتيح لك تشغيل الموسيقى في مجموعات من خلال الدردشات الصوتية الجديدة في Telegram! **
-
-🎸 ** اكتشف جميع أوامر الروبوت وكيفية عملها من خلال النقر على زر »📚 الأوامر! **
-
- **لمعرفة كيفية استخدام هذا الروبوت ، يرجى النقر فوق »🗼︙دليل الاستخدام! **
-</ b>""",
+        f"""<b>✨ **Welcome {message.from_user.mention} !** \n
+💭 **[{BOT_NAME}](https://t.me/{BOT_USERNAME}) allows you to play music on groups through the new Telegram's voice chats!**
+💡 **Find out all the Bot's commands and how they work by clicking on the\n» 📚 Commands button!**
+❔ **To know how to use this bot, please click on the » ❓ Basic Guide button!**
+</b>""",
         reply_markup=InlineKeyboardMarkup(
-            [ 
+            [
                 [
                     InlineKeyboardButton(
-                        "🎯︙ أضفني إلى مجموعتك", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")
-                ],[
-                    InlineKeyboardButton(
-                        "🗼︙دليل الاستخدام", callback_data="cbhowtouse")
-                ],[
-                    InlineKeyboardButton(
-                         "📚 الأوامر", callback_data="cbcmds"
-                    ),
-                    InlineKeyboardButton(
-                        "🐉︙مطور السورس", url=f"https://t.me/{OWNER_NAME}")
-                ],[
-                    InlineKeyboardButton(
-                        "📁︙ملفات السورس", url=f"https://t.me/{GROUP_SUPPORT}"
-                    ),
-                    InlineKeyboardButton(
-                        "🐉︙ديترويت", url=f"https://t.me/{UPDATES_CHANNEL}")
+                        "➕ Add me to your Group ➕",
+                        url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+                    )
                 ],
+                [InlineKeyboardButton("❓ Basic Guide", callback_data="cbhowtouse")],
+                [
+                    InlineKeyboardButton("📚 Commands", callback_data="cbcmds"),
+                    InlineKeyboardButton("💝 Donate", url=f"https://t.me/{OWNER_NAME}"),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "👥 Official Group", url=f"https://t.me/{GROUP_SUPPORT}"
+                    ),
+                    InlineKeyboardButton(
+                        "📣 Official Channel", url=f"https://t.me/{UPDATES_CHANNEL}"
+                    ),
+                ],
+                
             ]
         ),
-     disable_web_page_preview=True
+        disable_web_page_preview=True,
     )
 
 
-@Client.on_message(command(["start", f"start@{BOT_USERNAME}"]) & filters.group & ~filters.edited)
+@Client.on_message(
+    command(["start", f"start@{BOT_USERNAME}"]) & filters.group & ~filters.edited
+)
 async def start(client: Client, message: Message):
     current_time = datetime.utcnow()
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
-    await message.reply_text(
-        f"""✅ ** الروبوت قيد التشغيل ** \ n <b> 💠 ** وقت التشغيل: ** </ b> `{uptime}`""",
-        reply_markup=InlineKeyboardMarkup(
+    
+    keyboard=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "📁︙ملفات السورس", url=f"https://t.me/{GROUP_SUPPORT}"
+                        "✨ Group", url=f"https://t.me/{GROUP_SUPPORT}"
                     ),
                     InlineKeyboardButton(
-                        "🐉︙ديترويت", url=f"https://t.me/{UPDATES_CHANNEL}"
-                    )
+                        "📣 Channel", url=f"https://t.me/{UPDATES_CHANNEL}"
+                    ),
                 ]
             ]
-        )
+    )
+    
+    amort = f"**Hello {message.from_user.mention}, i'm {BOT_NAME}**\n\n✨ Bot is working normally\n✨ My Master: [{AMORT_NAME}](https://t.me/{OWNER_NAME})\n✨ Bot Version: `v{__version__}`\n✨ Pyrogram Version: `{__pyro_version__}`\n✨ Python Version: `{__python_version__}`\n✨ Uptime Status: `{uptime}`\n\n**Thanks for Adding me here, for playing music on your Group voice chat** ❤"
+    
+    await message.reply_photo(
+        photo=f"{AMORT_IMG}",
+        caption=amort,
+        reply_markup=keyboard,
     )
 
-@Client.on_message(command(["help", f"help@{BOT_USERNAME}"]) & filters.group & ~filters.edited)
+
+@Client.on_message(
+    command(["help", f"help@{BOT_USERNAME}"]) & filters.group & ~filters.edited
+)
 async def help(client: Client, message: Message):
     await message.reply_text(
-        f"""<b> 👋🏻 ** مرحبًا ** {message.from_user.mention ()} </b>
-
-
-**يرجى الضغط على الزر أدناه لقراءة الشرح والاطلاع على قائمة الأوامر المتاحة!**
-
-🎪 __ بدعم من {BOT_NAME} A.I__""",
+        f"""<b>👋🏻 **Hello** {message.from_user.mention()}</b>
+**Please press the button below to read the explanation and see the list of available commands !**
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="❔ HOW TO USE ME", callback_data="cbguide"
-                    )
-                ]
-            ]
+            [[InlineKeyboardButton(text="❔ HOW TO USE ME", callback_data="cbguide")]]
         ),
     )
 
-@Client.on_message(command(["help", f"help@{BOT_USERNAME}"]) & filters.private & ~filters.edited)
+
+@Client.on_message(
+    command(["help", f"help@{BOT_USERNAME}"]) & filters.private & ~filters.edited
+)
 async def help_(client: Client, message: Message):
     await message.reply_text(
-        f"""<b> 🎸 مرحبًا {message.from_user.mention} مرحبًا بك في قائمة المساعدة! </ b>
-
-**في هذه القائمة ، يمكنك فتح العديد من قوائم الأوامر المتاحة ، وفي كل قائمة أوامر يوجد أيضًا شرح موجز لكل أمر**
-
-🎪 __ بدعم من {BOT_NAME} A.I__""",
+        f"""<b>💡 Hello {message.from_user.mention} welcome to the help menu !</b>
+**in this menu you can open several available command menus, in each command menu there is also a brief explanation of each command**
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "📍︙الاوامر الاساسيه", callback_data="cbbasic"
-                    ),
-                    InlineKeyboardButton(
-                        "🗽︙الاوامر المتقدمه", callback_data="cbadvanced"
-                    )
+                    InlineKeyboardButton("📚 Basic Cmd", callback_data="cbbasic"),
+                    InlineKeyboardButton("📕 Advanced Cmd", callback_data="cbadvanced"),
                 ],
                 [
-                    InlineKeyboardButton(
-                        "📘 🦹🏻︙اومر الادمنيه", callback_data="cbadmin"
-                    ),
-                    InlineKeyboardButton(
-                        "🐉︙اومر المطورين", callback_data="cbsudo"
-                    )
+                    InlineKeyboardButton("📘 Admin Cmd", callback_data="cbadmin"),
+                    InlineKeyboardButton("📗 Sudo Cmd", callback_data="cbsudo"),
                 ],
-                [
-                    InlineKeyboardButton(
-                        "🗼︙اومر المالك", callback_data="cbowner"
-                    )
-                ],
-                
+                [InlineKeyboardButton("📔 Fun Cmd", callback_data="cbfun")],
             ]
-        )
+        ),
     )
 
 
@@ -149,10 +153,7 @@ async def ping_pong(client: Client, message: Message):
     start = time()
     m_reply = await message.reply_text("pinging...")
     delta_ping = time() - start
-    await m_reply.edit_text(
-        "🏓 `PONG!!`\n"
-        f"🎸 `{delta_ping * 1000:.3f} ms`"
-    )
+    await m_reply.edit_text("🏓 `PONG!!`\n" f"⚡️ `{delta_ping * 1000:.3f} ms`")
 
 
 @Client.on_message(command(["uptime", f"uptime@{BOT_USERNAME}"]) & ~filters.edited)
@@ -162,7 +163,7 @@ async def get_uptime(client: Client, message: Message):
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
     await message.reply_text(
-        "🎸 حالة الروبوت: \ n"
-        f"• *مدة التشغيل:** `{uptime}`\n"
-        f"• ** وقت البدء: ** `{START_TIME_ISO}`"
+        "🤖 bot status:\n"
+        f"• **uptime:** `{uptime}`\n"
+        f"• **start time:** `{START_TIME_ISO}`"
     )
