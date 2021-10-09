@@ -1,4 +1,3 @@
-
 from os import path
 
 import converter
@@ -40,9 +39,7 @@ async def stream(_, message: Message):
     if not audio:
         return await lel.edit("💭 **please reply to a telegram audio file**")
     if round(audio.duration / 60) > DURATION_LIMIT:
-        return await lel.edit(
-            f"❌ **music with duration more than** `{DURATION_LIMIT}` **minutes, can't play !**"
-        )
+        return await lel.edit(f"❌ **music with duration more than** `{DURATION_LIMIT}` **minutes, can't play !**" )
 
     # tede_ganteng = True
     title = audio.title
@@ -67,7 +64,6 @@ async def stream(_, message: Message):
             photo=f"{AUD_IMG}",
             caption=f"🏷 **Name:** {title[:50]}\n⏱ **Duration:** `{duration}`\n💡 **Status:** `Playing`\n"
             + f"🎧 **Request by:** {costumer}",
-            reply_markup=keyboard,
-        )
+            reply_markup=keyboard, )
 
     return await lel.delete()
