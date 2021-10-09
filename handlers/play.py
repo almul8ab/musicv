@@ -1,4 +1,5 @@
 
+
 import os
 from asyncio.queues import QueueEmpty
 from os import path
@@ -629,9 +630,9 @@ async def play(_, message: Message):
             )
 
             await lel.delete()
-            
+            # amort project
             return
-           
+            # amort project
         except:
             await lel.edit("__no more results to choose, starting to playing...__")
 
@@ -964,3 +965,4 @@ async def ytplay(_, message: Message):
         )
         os.remove("final.png")
         return await lel.delete()
+
