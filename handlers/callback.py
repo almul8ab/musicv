@@ -1,255 +1,190 @@
-
-
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
-from helpers.decorators import authorized_users_only
-from config import BOT_NAME, BOT_USERNAME, OWNER_NAME, GROUP_SUPPORT, UPDATES_CHANNEL, ASSISTANT_NAME
+from config import (
+    ASSISTANT_NAME,
+    BOT_NAME,
+    BOT_USERNAME,
+    GROUP_SUPPORT,
+    OWNER_NAME,
+    UPDATES_CHANNEL,
+)
 from handlers.play import cb_admin_check
+from helpers.decorators import authorized_users_only
+from pyrogram import Client, filters
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 
 @Client.on_callback_query(filters.regex("cbstart"))
 async def cbstart(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>🗼 **مرحبا , {query.message.from_user.mention} !** \n
-💭 **[{BOT_NAME}](https://t.me/{BOT_USERNAME}) يسمح لك بتشغيل الموسيقى على المجموعات من خلال الدردشات الصوتية في Telegram الجديدة!**
-
-🗼 **معرفة جميع الأوامر بوت وكيفية عملها من خلال النقر على زر » 📚 الأوامر !**
-
-❔ **لمعرفة كيفية استخدام هذا بوت، يرجى الضغط على » ❓ زر الدليل الأساسي!**
+        f"""<b>✨ **Welcome , i'm {query.message.from_user.mention} !** \n
+💭 **[{BOT_NAME}](https://t.me/{BOT_USERNAME}) allows you to play music on groups through the new Telegram's voice chats!**
+💡 **Find out all the Bot's commands and how they work by clicking on the\n» 📚 Commands button!**
+❔ **To know how to use this bot, please click on the » ❓ Basic Guide button!**
 </b>""",
         reply_markup=InlineKeyboardMarkup(
-            [ 
+            [
                 [
                     InlineKeyboardButton(
-                        " أضفني إلى مجموعتك", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")
-                ],[
+                        "➕ Add me to your Group ➕",
+                        url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+                    )
+                ],
+                [InlineKeyboardButton("❓ Basic Guide", callback_data="cbhowtouse")],
+                [
+                    InlineKeyboardButton("📚 Commands", callback_data="cbcmds"),
+                    InlineKeyboardButton("💝 Donate", url=f"https://t.me/{OWNER_NAME}"),
+                ],
+                [
                     InlineKeyboardButton(
-                        " دليل المستخدم   ", callback_data="cbhowtouse")
-                ],[
-                    InlineKeyboardButton(
-                         "📚 لاوامر", callback_data="cbcmds"
+                        "👥 Official Group", url=f"https://t.me/{GROUP_SUPPORT}"
                     ),
                     InlineKeyboardButton(
-                        "المطور", url=f"https://t.me/{OWNER_NAME}")
-                ],[
-                    InlineKeyboardButton(
-                        " قناه  الملفات", url=f"https://t.me/{GROUP_SUPPORT}"
+                        "📣 Official Channel", url=f"https://t.me/{UPDATES_CHANNEL}"
                     ),
-                    InlineKeyboardButton(
-                        "قناه لبسورس", url=f"https://t.me/{UPDATES_CHANNEL}")
-                ]
+                ],
+                
             ]
         ),
-     disable_web_page_preview=True
+        disable_web_page_preview=True,
     )
 
 
 @Client.on_callback_query(filters.regex("cbhelp"))
 async def cbhelp(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>🗼 مرحبا هناك، مرحبا بكم في قائمة المساعدة !</b>
-
-**في هذه القائمة يمكنك فتح العديد من قوائم الأوامر المتاحة، في كل قائمة الأمر هناك أيضا شرح موجز لكل أمر**
-
-🗼 __Powered by {BOT_NAME} __""",
+        f"""<b>💡 Hello there, welcome to the help menu !</b>
+» **in this menu you can open several available command menus, in each command menu there is also a brief explanation of each command**
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "📍︙الاوامر الاساسيه", callback_data="cbbasic"
-                    ),
-                    InlineKeyboardButton(
-                        "🗽︙الاوامر المتقدمه ", callback_data="cbadvanced"
-                    )
+                    InlineKeyboardButton("📚 Basic Cmd", callback_data="cbbasic"),
+                    InlineKeyboardButton("📕 Advanced Cmd", callback_data="cbadvanced"),
                 ],
                 [
-                    InlineKeyboardButton(
-                        "🦹🏻︙اومر الادمنيه", callback_data="cbadmin"
-                    ),
-                    InlineKeyboardButton(
-                        "🐉︙اومر المطورين", callback_data="cbsudo"
-                    )
+                    InlineKeyboardButton("📘 Admin Cmd", callback_data="cbadmin"),
+                    InlineKeyboardButton("📗 Sudo Cmd", callback_data="cbsudo"),
                 ],
-                [
-                    InlineKeyboardButton(
-                        "🐉︙اومر المالك", callback_data="cbowner"
-                    )
-                ],
-              
-                [
-                    InlineKeyboardButton(
-                        "🏡 الرجوع الى المساعده", callback_data="cbguide"
-                    )
-                ]
+                [InlineKeyboardButton("📙 Owner Cmd", callback_data="cbowner")],
+                [InlineKeyboardButton("🏡 Back to Help", callback_data="cbguide")],
             ]
-        )
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbbasic"))
 async def cbbasic(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>📍 هنا الأوامر الأساسية</b>
-- تشغيل الأغنية من اليوتيوب
-/play اسم الاغنيه :
-- تشغيل الأغنية مباشرة من اليوتيوب
-/ytp اسم الاغنيه: 
-دفق (الرد على الصوت) - تشغيل الأغنية باستخدام ملف صوتي /stream
-قائمة التشغيل - إظهار أغنية القائمة في قائمة الانتظار /playlist
-/song أغنية (اسم الأغنية) - تنزيل أغنية من youtube
-/search البحث (اسم الفيديو) - ابحث عن مقطع فيديو من youtube بالتفصيل
-┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
-/vsong (اسم الفيديو) - تنزيل الفيديو من youtube مفصل
-/ غنائي - (اسم الأغنية) مكشطة كلمات
-/vk (اسم الأغنية) - تنزيل الأغنية من الوضع المضمَّن
-┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
-/play - دفق الموسيقى على قناة الدردشة الصوتية
-/cplayer - إظهار الأغنية أثناء البث
-/cpause - إيقاف الموسيقى المتدفقة مؤقتًا
-/cresume - استئناف توقف البث مؤقتًا
-/cskip - تخطي التدفق إلى الأغنية التالية
-/cend - قم بإنهاء تدفق الموسيقى
-/admincache - قم بتحديث ذاكرة التخزين المؤقت للمسؤول
-/ubjoinc - قم بدعوة المساعد للانضمام إلى قناتك
+        f"""<b>🏮 here is the basic commands</b>
+🎧 [ GROUP VC CMD ]
+/play (song name) - play song from youtube
+/ytp (song name) - play song directly from youtube 
+/stream (reply to audio) - play song using audio file
+/playlist - show the list song in queue
+/song (song name) - download song from youtube
+/search (video name) - search video from youtube detailed
+/vsong (video name) - download video from youtube detailed
 
-🎪 __ by {BOT_NAME} __""",
+🎧 [ CHANNEL VC CMD ]
+/cplay - stream music on channel voice chat
+/cplayer - show the song in streaming
+/cpause - pause the streaming music
+/cresume - resume the streaming was paused
+/cskip - skip streaming to the next song
+/cend - end the streaming music
+/refresh - refresh the admin cache
+/ubjoinc - invite the assistant for join to your channel
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbhelp"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbhelp")]]
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbadvanced"))
 async def cbadvanced(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>🦹🏻︙ ها هي الأوامر المتقدمة</b>
-
- ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
-/start : (في المجموعة) - انظر حالة الروبوت على قيد الحياة
-/cache : أعد تحميل البوت وقم بتحديث قائمة الإدارة
-/cache : تحديث ذاكرة التخزين المؤقت للمسؤول
-/ping : تحقق من حالة البوت بينغ
-/uptime : تحقق من حالة وقت تشغيل الروبوت
-/id : إظهار المجموعة / هوية المستخدم وغيرها""",
+        f"""<b>🏮 here is the advanced commands</b>
+/start (in group) - see the bot alive status
+/reload - reload bot and refresh the admin list
+/ping - check the bot ping status
+/uptime - check the bot uptime status
+/id - show the group/user id & other
+⚡ __Powered by {BOT_NAME} A.I__""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbhelp"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbhelp")]]
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbadmin"))
 async def cbadmin(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>🎸︙هنا هو أوامر المشرف </b>
-
-┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
-/player مشغل - عرض حالة تشغيل الموسيقى
-/ pause - إيقاف تدفق الموسيقى مؤقتًا
-/pause استئناف - استئناف تم إيقاف الموسيقى مؤقتًا
-/skip تخطي - انتقل إلى الأغنية التالية
-/stop - إيقاف تدفق الموسيقى
-/userbotjoin - دعوة المساعد للانضمام إلى مجموعتك
-/auth - المستخدم المصرح له باستخدام برنامج Music bot
-/deauth - غير مصرح به لاستخدام برنامج تتبع الموسيقى
-/control التحكم - افتح لوحة إعدادات المشغل
-/delcmd (on | off) - تمكين / تعطيل ميزة del cmd
-/musicplayer مشغل الموسيقى (تشغيل إيقاف) - تعطيل / تمكين مشغل الموسيقى في مجموعتك
-/b و /tb (الحظر / الحظر المؤقت) - مستخدم محظور بشكل دائم أو مؤقت في المجموعة
-/ub - إلى مستخدم غير محظور تم حظرك من المجموعة
-/m و /tm (كتم الصوت / كتم الصوت المؤقت) - كتم صوت المستخدم في المجموعة بشكل دائم أو مؤقت
-/um - لإلغاء كتم صوت المستخدم الذي تم كتمه في المجموعة""",
+        f"""<b>🏮 here is the admin commands</b>
+/player - show the music playing status
+/pause - pause the music streaming
+/resume - resume the music was paused
+/skip - skip to the next song
+/end - stop music streaming
+/join - invite userbot join to your group
+/leave - order the userbot to leave your group
+/auth - authorized user for using music bot
+/deauth - unauthorized for using music bot
+/control - open the player settings panel
+/delcmd (on | off) - enable / disable del cmd feature
+/musicplayer (on / off) - disable / enable music player in your group
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbhelp"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbhelp")]]
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbsudo"))
 async def cbsudo(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>🐉 هنا أوامر المطور </b>
-
-/userbotleaveall - اطلب من المساعد المغادرة من جميع المجموعات
-/gcast - إرسال رسالة بث trought المساعد
-/stats - إظهار إحصائية البوت
-/rmd - إزالة كافة الملفات التي تم تنزيلها""",
+        f"""<b>🏮 here is the sudo commands</b>
+/leaveall - order the assistant to leave from all group
+/stats - show the bot statistic
+/rmd - remove all downloaded files
+⚡ __Powered by {BOT_NAME} A.I__""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbhelp"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbhelp")]]
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbowner"))
 async def cbowner(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>🦹🏻 هنا هو أوامر المالك</b>
-/stats -- تبين إحصاءات بوت
-/broadcast - إرسال رسالة بث من بوت
-/block (معرف المستخدم -- مدة -- السبب) -- المستخدم كتلة لاستخدام بوت الخاص بك
-/unblock إلغاء الحظر (معرف المستخدم - السبب) - إلغاء حظر المستخدم الذي قمت بحظره لاستخدام البوت الخاص بك
-/blocklist -- تظهر لك قائمة المستخدم تم حظره لاستخدام بوت الخاص بك
-
-📝 ملاحظة: يمكن تنفيذ جميع الأوامر التي يملكها هذا البوت من قبل مالك البوت دون أي استثناءات. _""",
+        f"""<b>🏮 here is the owner commands</b>
+/stats - show the bot statistic
+/broadcast - send a broadcast message from bot
+/block (user id - duration - reason) - block user for using your bot
+/unblock (user id - reason) - unblock user you blocked for using your bot
+/blocklist - show you the list of user was blocked for using your bot
+📝 note: all commands owned by this bot can be executed by the owner of the bot without any exceptions.
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbhelp"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbhelp")]]
+        ),
     )
-
 
 
 @Client.on_callback_query(filters.regex("cbguide"))
 async def cbguide(_, query: CallbackQuery):
     await query.edit_message_text(
-        f""" كيفية استخدام هذا البوت:
-
-1.) أولا، إضافة لي إلى مجموعتك.
-2.) ثم ترقية لي كمسؤول وإعطاء جميع الأذونات باستثناء المشرف مجهول.
-3.) إضافة @{ASSISTANT_NAME} إلى مجموعتك أو اكتب /join لدعوتها.
-4.) تشغيل الدردشة الصوتية أولا قبل البدء في تشغيل الموسيقى. _""",
+        f"""❓ HOW TO USE THIS BOT:
+1.) first, add me to your group.
+2.) then promote me as admin and give all permissions except anonymous admin.
+3.) add @{ASSISTANT_NAME} to your group or type /userbotjoin to invite her.
+4.) turn on the voice chat first before start to play music.
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
             [
-                [
-                    InlineKeyboardButton(
-                        "📚 الاوامر", callback_data="cbhelp"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        "🔻 ", callback_data="close"
-                    )
-                ]
+                [InlineKeyboardButton("📚 Command List", callback_data="cbhelp")],
+                [InlineKeyboardButton("🗑 Close", callback_data="close")],
             ]
-        )
+        ),
     )
 
 
@@ -262,7 +197,7 @@ async def close(_, query: CallbackQuery):
 @cb_admin_check
 async def cbback(_, query: CallbackQuery):
     await query.edit_message_text(
-        "**🎸هنا قائمة التحكم في البوت :**",
+        "**💡 here is the control menu of bot :**",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -271,39 +206,13 @@ async def cbback(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⏩ skip", callback_data="cbskip"),
-                    InlineKeyboardButton("⏹ end", callback_data="cbend"),
+                    InlineKeyboardButton("⏹ stop", callback_data="cbend"),
                 ],
                 [InlineKeyboardButton("⛔ anti cmd", callback_data="cbdelcmds")],
-                [InlineKeyboardButton("🗼 group tools", callback_data="cbgtools")],
-                [InlineKeyboardButton("🔻 Close", callback_data="close")],
+                [InlineKeyboardButton("🗑 Close", callback_data="close")],
             ]
         ),
     )
-
-
-@Client.on_callback_query(filters.regex("cbgtools"))
-@cb_admin_check
-@authorized_users_only
-async def cbgtools(_, query: CallbackQuery):
-    await query.edit_message_text(
-        f"""<b>هذه هي ميزة المعلوماتn :</b>
-🗼 ** الميزة: ** تحتوي هذه الميزة على وظائف يمكنها حظر وكتم الصوت وإلغاء الحظر وإلغاء كتم صوت المستخدمين في مجموعتك.
-ويمكنك أيضًا تحديد وقت للحظر وعقوبات كتم الصوت لأعضاء مجموعتك بحيث يمكن تحريرهم من العقوبة في الوقت المحدد.
-❔ ** الاستخدام: **
-1️⃣ حظر المستخدم وحظره مؤقتًا من مجموعتك:
-   »اكتب` / b اسم المستخدم / الرد على الرسالة` حظر بشكل دائم
-   اكتب `/ tb username / الرد على الرسالة / المدة` حظر المستخدم مؤقتًا
-   »اكتب` / ub username / رد على الرسالة` لمستخدم غير محظور
-2️⃣ كتم وكتم المستخدم مؤقتًا في مجموعتك:
-   »اكتب` / m اسم المستخدم / الرد على الرسالة` كتم الصوت بشكل دائم
-   اكتب `/ tm اسم المستخدم / الرد على الرسالة / المدة` كتم المستخدم مؤقتًا
-   »اكتب` / um اسم المستخدم / رد على الرسالة` لإلغاء كتم صوت المستخدم
-📝 ملاحظة: cmd / b و / tb و / ub هي وظيفة للمستخدم المحظور / غير المحظور من مجموعتك ، بينما / m و / tm و / um هي أوامر لكتم / إلغاء كتم صوت المستخدم في مجموعتك""",
-        reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbback")]]
-        ),
-    )
-
 
 
 @Client.on_callback_query(filters.regex("cbdelcmds"))
@@ -311,87 +220,56 @@ async def cbgtools(_, query: CallbackQuery):
 @authorized_users_only
 async def cbdelcmds(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>هذه هي معلومات الميزة :</b>
+        f"""<b>this is the feature information :</b>
         
-**💡 الميزة:** حذف كل الأوامر المرسلة من قبل المستخدمين لتجنب البريد المزعج في مجموعات !
-
-❔ مثال:**
-
- 1️⃣لتشغيل الميزة :
-     » `/delcmd on`
+**💡 Feature:** delete every commands sent by users to avoid spam in groups !
+❔ usage:**
+ 1️⃣ to turn on feature:
+     » type `/delcmd on`
     
- 2️⃣ لإيقاف تشغيل الميزة:
-     »  `/delcmd off`
+ 2️⃣ to turn off feature:
+     » type `/delcmd off`
       
 ⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbback"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbback")]]
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbcmds"))
 async def cbhelps(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""<b>مرحبًا بكم ، مرحبًا بكم في قائمة المساعدة !</b>
-
-**في هذه القائمة ، يمكنك فتح العديد من قوائم الأوامر المتاحة ، وفي كل قائمة أوامر يوجد أيضًا شرح موجز لكل أمر **""",
+        f"""<b>💡 Hello there, welcome to the help menu !</b>
+» **in this menu you can open several available command menus, in each command menu there is also a brief explanation of each command**
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "📍︙الاوامر الاساسيه", callback_data="cbbasic"
-                    ),
-                    InlineKeyboardButton(
-                        "🗽︙الاوامر المتقدمه", callback_data="cbadvanced"
-                    )
+                    InlineKeyboardButton("📚 Basic Cmd", callback_data="cbbasic"),
+                    InlineKeyboardButton("📕 Advanced Cmd", callback_data="cbadvanced"),
                 ],
                 [
-                    InlineKeyboardButton(
-                        "🦹🏻︙اومر الادمنيه", callback_data="cbadmin"
-                    ),
-                    InlineKeyboardButton(
-                        "🐉︙اومر المطورين", callback_data="cbsudo"
-                    )
+                    InlineKeyboardButton("📘 Admin Cmd", callback_data="cbadmin"),
+                    InlineKeyboardButton("📗 Sudo Cmd", callback_data="cbsudo"),
                 ],
-                [
-                    InlineKeyboardButton(
-                        "🐉︙اومر المالك", callback_data="cbowner"
-                    )
-                ],
-        
-                [
-                    InlineKeyboardButton(
-                        "🏡 الرجوع", callback_data="cbstart"
-                    )
-                ]
+                [InlineKeyboardButton("📙 Owner Cmd", callback_data="cbowner")],
+                [InlineKeyboardButton("🏡 Go Back", callback_data="cbstart")],
             ]
-        )
+        ),
     )
 
 
 @Client.on_callback_query(filters.regex("cbhowtouse"))
 async def cbguides(_, query: CallbackQuery):
     await query.edit_message_text(
-        f""" كيفية استخدام هذا البوت:
-
-1.) أولا، إضافة لي إلى مجموعتك.
-2.) ثم ترقية لي كمسؤول وإعطاء جميع الأذونات باستثناء المشرف مجهول.
-3.) إضافة @{ASSISTANT_NAME} إلى مجموعتك أو اكتب /userbotjoin لدعوتها.
-4.) تشغيل الدردشة الصوتية أولا قبل البدء في تشغيل الموسيقى.""",
+        f"""❓ HOW TO USE THIS BOT:
+1.) first, add me to your group.
+2.) then promote me as admin and give all permissions except anonymous admin.
+3.) add @{ASSISTANT_NAME} to your group or type /userbotjoin to invite her.
+4.) turn on the voice chat first before start to play music.
+⚡ __Powered by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "🏡 ", callback_data="cbstart"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("🏡 Go Back", callback_data="cbstart")]]
+        ),
     )
