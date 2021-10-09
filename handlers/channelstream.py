@@ -1,67 +1,47 @@
-# Copyright (C) 2021 AmortMusic Project
 
-import json
 import os
 from os import path
-from typing import Callable
 
-import aiofiles
-import aiohttp
-import ffmpeg
 import requests
-import wget
-from PIL import Image, ImageDraw, ImageFont
 from pyrogram import Client, filters
 from pyrogram.errors import UserAlreadyParticipant
-from pyrogram.types import Voice
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
-from handlers.play import generate_cover
-from handlers.play import cb_admin_check
-from handlers.play import transcode
-from handlers.play import convert_seconds
-from handlers.play import time_to_seconds
-from handlers.play import changeImageSize
-from config import BOT_NAME as bn
-from config import DURATION_LIMIT
-from config import UPDATES_CHANNEL as updateschannel
-from config import que
-from cache.admins import admins as a
-from helpers.errors import DurationLimitError
-from helpers.decorators import errors
-from helpers.admins import get_administrators
-from helpers.channelmusic import get_chat_id
-from helpers.decorators import authorized_users_only
-from helpers.filters import command, other_filters
-from helpers.gets import get_file_name
+
 from callsmusic import callsmusic
 from callsmusic.callsmusic import client as USER
+from callsmusic.queues import queues
+from config import que, DURATION_LIMIT, BOT_USERNAME, UPDATES_CHANNEL as updateschannel
 from converter.converter import convert
 from downloaders import youtube
-from callsmusic.queues import queues
+from handlers.play import cb_admin_check, generate_cover
+from helpers.filters import command, other_filters
+from helpers.admins import get_administrators
+from helpers.decorators import authorized_users_only
+from helpers.errors import DurationLimitError
+from helpers.gets import get_file_name
 
 chat_id = None
 
 
-
-@Client.on_message(filters.command(["channelplaylist","cplaylist"]) & filters.group & ~filters.edited)
+@Client.on_message(command(["cplaylist", f"cplaylist@{BOT_USERNAME}"]) & other_filters)
 async def playlist(client, message):
     try:
-      lel = await client.get_chat(message.chat.id)
-      lol = lel.linked_chat.id
+        lel = await client.get_chat(message.chat.id)
+        lol = lel.linked_chat.id
     except:
-      message.reply("هل هذه الدردشة مرتبطة حتى؟")
-      return
+        message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     global que
     queue = que.get(lol)
     if not queue:
-        await message.reply_text("اللاعب غير متصل بالمحادثة الصوتية")
+        await message.reply_text("player is not connected to voice chat")
     temp = []
     for t in queue:
         temp.append(t)
     now_playing = temp[0][0]
     by = temp[0][1].mention(style="md")
-    msg = "**Now Playing** in {}".format(lel.linked_chat.title)
+    msg = "💡 **now playing** on {}".format(lel.linked_chat.title)
     msg += "\n- " + now_playing
     msg += "\n- Req by " + by
     temp.pop(0)
@@ -82,11 +62,11 @@ async def playlist(client, message):
 def updated_stats(chat, queue, vol=100):
     if chat.id in callsmusic.pytgcalls.active_calls:
         # if chat.id in active_chats:
-        stats = "Settings of **{}**".format(chat.title)
+        stats = "⚙️ settings of **{}**".format(chat.title)
         if len(que) > 0:
             stats += "\n\n"
             stats += "Volume : {}%\n".format(vol)
-            stats += "Songs in queue : `{}`\n".format(len(que))
+            stats += "Songs Played : `{}`\n".format(len(que))
             stats += "Now Playing : **{}**\n".format(queue[0][0])
             stats += "Requested by : {}".format(queue[0][1].mention)
     else:
@@ -108,42 +88,42 @@ def r_ply(type_):
                 InlineKeyboardButton("⏭", "cskip"),
             ],
             [
-                InlineKeyboardButton("🎸 قائمه الاغاني", "cplaylist"),
+                InlineKeyboardButton("📖 PLAY-LIST", "cplaylist"),
             ],
-            [InlineKeyboardButton("🔻الغاء", "ccls")],
+            [InlineKeyboardButton("🗑 Close", "ccls")],
         ]
     )
     return mar
 
 
-@Client.on_message(filters.command(["channelcurrent","ccurrent"]) & filters.group & ~filters.edited)
+@Client.on_message(command(["ccurent", f"ccurent@{BOT_USERNAME}"]) & other_filters)
 async def ee(client, message):
     try:
-      lel = await client.get_chat(message.chat.id)
-      lol = lel.linked_chat.id
-      conv = lel.linked_chat
+        lel = await client.get_chat(message.chat.id)
+        lol = lel.linked_chat.id
+        conv = lel.linked_chat
     except:
-      await message.reply("هل هذه الدردشة مرتبطة حتى")
-      return
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     queue = que.get(lol)
     stats = updated_stats(conv, queue)
     if stats:
         await message.reply(stats)
     else:
-        await message.reply("الرجاء تشغيل الدردشة الصوتية أولاً!")
+        await message.reply("please turn on the voice chat first !")
 
 
-@Client.on_message(filters.command(["channelplayer","cplayer"]) & filters.group & ~filters.edited)
+@Client.on_message(command(["cplayer", f"cplayer@{BOT_USERNAME}"]) & other_filters)
 @authorized_users_only
 async def settings(client, message):
     playing = None
     try:
-      lel = await client.get_chat(message.chat.id)
-      lol = lel.linked_chat.id
-      conv = lel.linked_chat
+        lel = await client.get_chat(message.chat.id)
+        lol = lel.linked_chat.id
+        conv = lel.linked_chat
     except:
-      await message.reply("هل هذه الدردشة مرتبطة حتى")
-      return
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     queue = que.get(lol)
     stats = updated_stats(conv, queue)
     if stats:
@@ -153,18 +133,18 @@ async def settings(client, message):
         else:
             await message.reply(stats, reply_markup=r_ply("play"))
     else:
-        await message.reply("الرجاء تشغيل الدردشة الصوتية أولاً!")
+        await message.reply("please turn on the voice chat first !")
 
 
 @Client.on_callback_query(filters.regex(pattern=r"^(cplaylist)$"))
 async def p_cb(b, cb):
     global que
     try:
-      lel = await client.get_chat(cb.message.chat.id)
-      lol = lel.linked_chat.id
-      conv = lel.linked_chat
+        lel = await client.get_chat(cb.message.chat.id)
+        lol = lel.linked_chat.id
+        conv = lel.linked_chat
     except:
-      return    
+        return
     que.get(lol)
     type_ = cb.matches[0].group(1)
     cb.message.chat.id
@@ -173,7 +153,7 @@ async def p_cb(b, cb):
     if type_ == "playlist":
         queue = que.get(lol)
         if not queue:
-            await cb.message.edit("لمشغل غير متصل بالدردشة الصوتية!")
+            await cb.message.edit("player is not connected to voice chat !")
         temp = []
         for t in queue:
             temp.append(t)
@@ -201,60 +181,57 @@ async def p_cb(b, cb):
 async def m_cb(b, cb):
     global que
     if (
-        cb.message.chat.title.startswith("قناه الاغاني: ")
+        cb.message.chat.title.startswith("Channel Music: ")
         and chat.title[14:].isnumeric()
     ):
         chet_id = int(chat.title[13:])
     else:
-      try:
-        lel = await b.get_chat(cb.message.chat.id)
-        lol = lel.linked_chat.id
-        conv = lel.linked_chat
-        chet_id = lol
-      except:
-        return
+        try:
+            lel = await b.get_chat(cb.message.chat.id)
+            lol = lel.linked_chat.id
+            conv = lel.linked_chat
+            chet_id = lol
+        except:
+            return
     qeue = que.get(chet_id)
     type_ = cb.matches[0].group(1)
     cb.message.chat.id
     m_chat = cb.message.chat
-    
 
     the_data = cb.message.reply_markup.inline_keyboard[1][0].callback_data
     if type_ == "cpause":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
             callsmusic.pytgcalls.active_calls[chet_id] == "paused"
         ):
-            await cb.answer("الدردشة غير متصلة!", show_alert=True)
+            await cb.answer("Chat is not connected!", show_alert=True)
         else:
             callsmusic.pytgcalls.pause_stream(chet_id)
 
-            await cb.answer("توقفت الموسيقى مؤقتًا")
-            await cb.message.edit(
-                updated_stats(conv, qeue), reply_markup=r_ply("play")
-            )
+            await cb.answer("music paused!")
+            await cb.message.edit(updated_stats(conv, qeue), reply_markup=r_ply("play"))
 
     elif type_ == "cplay":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
-            callsmusic.pytgcalls.active_calls[chet_id] == "مشغله"
+            callsmusic.pytgcalls.active_calls[chet_id] == "playing"
         ):
-            await cb.answer("الدردشة غير متصله!", show_alert=True)
+            await cb.answer("chat is not connected!", show_alert=True)
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
-            await cb.answer("استؤنفت الموسيقى!")
+            await cb.answer("music resumed!")
             await cb.message.edit(
-                updated_stats(conv, qeue), reply_markup=r_ply("وقفة")
+                updated_stats(conv, qeue), reply_markup=r_ply("pause")
             )
 
     elif type_ == "cplaylist":
         queue = que.get(cb.message.chat.id)
         if not queue:
-            await cb.message.edit("اللاعب غير متصل بالدردشة الصوتية!")
+            await cb.message.edit("player is not connected to voice chat !")
         temp = []
         for t in queue:
             temp.append(t)
         now_playing = temp[0][0]
         by = temp[0][1].mention(style="md")
-        msg = "**Now Playing** in {}".format(cb.message.chat.title)
+        msg = "💡 **now Playing** on {}".format(cb.message.chat.title)
         msg += "\n- " + now_playing
         msg += "\n- Req by " + by
         temp.pop(0)
@@ -272,21 +249,21 @@ async def m_cb(b, cb):
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
             callsmusic.pytgcalls.active_calls[chet_id] == "playing"
         ):
-            await cb.answer("الدردشة ليست متصلة أو قيد التشغيل بالفعل", show_alert=True)
+            await cb.answer("chat is not connected or already playing", show_alert=True)
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
-            await cb.answer(""الموسيقى مستأنفة!")
+            await cb.answer("music resumed!")
     elif type_ == "cpuse":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
             callsmusic.pytgcalls.active_calls[chet_id] == "paused"
         ):
-            await cb.answer("الدردشة ليست متصلة أو متوقفة مؤقتًا بالفعل", show_alert=True)
+            await cb.answer("chat is not connected or already paused", show_alert=True)
         else:
             callsmusic.pytgcalls.pause_stream(chet_id)
 
             await cb.answer("music paused!")
     elif type_ == "ccls":
-        await cb.answer(قائمة مغلقة")
+        await cb.answer("closed menu")
         await cb.message.delete()
 
     elif type_ == "cmenu":
@@ -301,9 +278,9 @@ async def m_cb(b, cb):
                     InlineKeyboardButton("⏭", "cskip"),
                 ],
                 [
-                    InlineKeyboardButton("🎸 قائمه الاغاني", "cplaylist"),
+                    InlineKeyboardButton("📖 PLAY-LIST", "cplaylist"),
                 ],
-                [InlineKeyboardButton("🔻الغاء", "ccls")],
+                [InlineKeyboardButton("🗑 Close", "ccls")],
             ]
         )
         await cb.message.edit(stats, reply_markup=marr)
@@ -311,22 +288,20 @@ async def m_cb(b, cb):
         if qeue:
             qeue.pop(0)
         if chet_id not in callsmusic.pytgcalls.active_calls:
-            await cb.answer("الدردشة غير متصلة!", show_alert=True)
+            await cb.answer("chat is not connected!", show_alert=True)
         else:
             queues.task_done(chet_id)
 
             if queues.is_empty(chet_id):
                 callsmusic.pytgcalls.leave_group_call(chet_id)
 
-                await cb.message.edit("- لا مزيد من قائمة التشغيل .. \ n- مغادرة الدردشة الصوتية!")
+                await cb.message.edit("» no more playlist\n» userbot leaving voice chat !")
             else:
-                callsmusic.pytgcalls.change_stream(
-                    chet_id, queues.get(chet_id)["file"]
-                )
+                callsmusic.pytgcalls.change_stream(chet_id, queues.get(chet_id)["file"])
                 await cb.answer("Skipped")
                 await cb.message.edit((m_chat, qeue), reply_markup=r_ply(the_data))
                 await cb.message.reply_text(
-                    f"-مسار تم تخطيه \ n- قيد التشغيل الآن ** {qeue [0] [0]} **"
+                    "⏭ **You've skipped to the next song.**"
                 )
 
     else:
@@ -337,33 +312,33 @@ async def m_cb(b, cb):
                 pass
 
             callsmusic.pytgcalls.leave_group_call(chet_id)
-            await cb.message.edit("تم فصل مشغل الموسيقى عن الدردشة الصوتية!")
+            await cb.message.edit("music player was disconnected from voice chat !")
         else:
-            await cb.answer("الدردشة غير متصلة!", show_alert=True)
+            await cb.answer("chat is not connected !", show_alert=True)
 
 
-@Client.on_message(filters.command(["channelplay","cplay"])  & filters.group & ~filters.edited)
+@Client.on_message(command(["cplay", f"cplay@{BOT_USERNAME}"]) & other_filters)
 @authorized_users_only
 async def play(_, message: Message):
     global que
-    lel = await message.reply("♻️ ** معالجة ... **")
+    lel = await message.reply("🔎 **searching...**")
 
     try:
-      conchat = await _.get_chat(message.chat.id)
-      conv = conchat.linked_chat
-      conid = conchat.linked_chat.id
-      chid = conid
+        conchat = await _.get_chat(message.chat.id)
+        conv = conchat.linked_chat
+        conid = conchat.linked_chat.id
+        chid = conid
     except:
-      await message.reply("هل هذه الدردشة مرتبطة حتى؟")
-      return
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     try:
-      administrators = await get_administrators(conv)
+        administrators = await get_administrators(conv)
     except:
-      await message.reply("أنا لست مشرف في هذه القناة ، آسف! !")
+        await message.reply("i'm not admin in the channel, sorry !")
     try:
         user = await USER.get_me()
     except:
-        user.first_name = "المساعد"
+        user.first_name = "helper"
     usar = user
     wew = usar.id
     try:
@@ -372,24 +347,23 @@ async def play(_, message: Message):
     except:
         for administrator in administrators:
             if administrator == message.from_user.id:
-                if message.chat.title.startswith("قناه الاغاني: "):
+                if message.chat.title.startswith("Channel Music: "):
                     await lel.edit(
-                        "<b> تذكر إضافة مساعد إلى قناتك </ b>",
+                        "💡 please add userbot to channel first",
                     )
-                    pass
 
                 try:
                     invitelink = await _.export_chat_invite_link(chid)
                 except:
                     await lel.edit(
-                        "<b> أضفني كمسؤول عن قناتك أولاً </ b>",
+                        "💡 promote me as admin first !",
                     )
                     return
 
                 try:
                     await USER.join_chat(invitelink)
                     await lel.edit(
-                        "<b> انضم برنامج المستخدم المساعد إلى قناتك </ b>",
+                        "✅ **userbot succesfully joined chat**",
                     )
 
                 except UserAlreadyParticipant:
@@ -397,21 +371,21 @@ async def play(_, message: Message):
                 except Exception:
                     # print(e)
                     await lel.edit(
-                        f"<b> 🔴 خطأ في انتظار الفيضان 🔴 \ n لم يتمكن المستخدم {user.first_name} من الانضمام إلى قناتك بسبب الطلبات الكثيفة على userbot! تأكد من عدم حظر المستخدم في المجموعة."
-                        "\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
+                        f"<b>🔴 Flood Wait Error 🔴 \nUser {user.first_name} couldn't join your channel due to heavy requests for userbot! Make sure user is not banned in group."
+                        "\n\nOr manually add assistant to your Group and try again</b>",
                     )
     try:
         await USER.get_chat(chid)
         # lmoa = await client.get_chat_member(chid,wew)
     except:
         await lel.edit(
-            f"<i> {user.first_name} Userbot ليس في هذه الدردشة ، اطلب من مسؤول القناة إرسال / تشغيل الأمر لأول مرة أو إضافة {user.first_name} يدويًا </ i>"
+            f"❌ `NOT_IN_GROUP`\n\n» **The userbot not in this group, bot can't play music.**"
         )
         return
     message.from_user.id
     text_links = None
     message.from_user.first_name
-    await lel.edit("🔎 **finding...**")
+    await lel.edit("🎧 **preparing...**")
     message.from_user.id
     user_id = message.from_user.id
     message.from_user.first_name
@@ -424,14 +398,12 @@ async def play(_, message: Message):
             entities = message.reply_to_message.entities + entities
         elif message.reply_to_message.caption_entities:
             entities = message.reply_to_message.entities + entities
-        urls = [entity for entity in entities if entity.type == 'url']
-        text_links = [
-            entity for entity in entities if entity.type == 'text_link'
-        ]
+        urls = [entity for entity in entities if entity.type == "url"]
+        text_links = [entity for entity in entities if entity.type == "text_link"]
     else:
-        urls=None
+        urls = None
     if text_links:
-        urls = True    
+        urls = True
     audio = (
         (message.reply_to_message.audio or message.reply_to_message.voice)
         if message.reply_to_message
@@ -440,24 +412,27 @@ async def play(_, message: Message):
     if audio:
         if round(audio.duration / 60) > DURATION_LIMIT:
             raise DurationLimitError(
-                f"❌ غير مسموح بتشغيل مقاطع الفيديو التي تزيد مدتها عن {DURATION_LIMIT} دقيقة!"
+                f"❌ music with duration more than `{DURATION_LIMIT}` minutes can't play."
             )
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸 القائمه", callback_data="cmenu"),
-                    InlineKeyboardButton("🔻الغاء", callback_data="ccls"),
+                    InlineKeyboardButton("🖱 Menu", callback_data="cmenu"),
+                    InlineKeyboardButton("🗑 Close", callback_data="ccls"),
                 ],
-                [InlineKeyboardButton(text="🗽 القناه", url=f"https://t.me/{updateschannel}")],
+                [
+                    InlineKeyboardButton(
+                        text="📣 Channel", url=f"https://t.me/{updateschannel}"
+                    )
+                ],
             ]
         )
         file_name = get_file_name(audio)
         title = file_name
-        thumb_name = "https://telegra.ph/file/97b8759e86bf092bf2acb.png"
+        thumb_name = "https://telegra.ph/file/f6086f8909fbfeb0844f2.png"
         thumbnail = thumb_name
         duration = round(audio.duration / 60)
-        views = "Locally added"
-        requested_by = message.from_user.first_name
+        message.from_user.first_name
         await generate_cover(title, thumbnail)
         file_path = await convert(
             (await message.reply_to_message.download(file_name))
@@ -466,82 +441,86 @@ async def play(_, message: Message):
         )
     elif urls:
         query = toxt
-        await lel.edit("🎸 **يتم المعالجة...**")
-        ydl_opts = {"format": "bestaudio/best"}
+        await lel.edit("🎵 **sending audio...**")
+        ydl_opts = {"format": "bestaudio[ext=m4a]"}
         try:
             results = YoutubeSearch(query, max_results=1).to_dict()
             url = f"https://youtube.com{results[0]['url_suffix']}"
             # print(results)
-            title = results[0]["title"][:40]
+            title = results[0]["title"][:60]
             thumbnail = results[0]["thumbnails"][0]
-            thumb_name = f"thumb{title}.jpg"
+            thumb_name = f"{title}.jpg"
             thumb = requests.get(thumbnail, allow_redirects=True)
             open(thumb_name, "wb").write(thumb.content)
             duration = results[0]["duration"]
+            results[0]["duration"]
             results[0]["url_suffix"]
-            views = results[0]["views"]
+            results[0]["views"]
 
         except Exception as e:
-            await lel.edit(
-                "❗ لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح."
-            )
+            await lel.edit("😕 **couldn't find song you requested**\n\n» **please provide the correct song name or include the artist's name as well**")
             print(str(e))
             return
         dlurl = url
-        dlurl=dlurl.replace("youtube","youtubepp")
+        dlurl = dlurl.replace("youtube", "youtubepp")
         keyboard = InlineKeyboardMarkup(
-          [
-              [
-                  InlineKeyboardButton("🎸 القائمه", callback_data="cmenu"),
-                  InlineKeyboardButton("🔻الغاء", callback_data="ccls")
-              ],[
-                  InlineKeyboardButton("🗽 القناه", url=f"https://t.me/{updateschannel}")
-              ]
-          ]
+            [
+                [
+                    InlineKeyboardButton("🖱 Menu", callback_data="cmenu"),
+                    InlineKeyboardButton("🗑 Close", callback_data="ccls"),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "📣 Channel", url=f"https://t.me/{updateschannel}"
+                    )
+                ],
+            ]
         )
-        requested_by = message.from_user.first_name
+        message.from_user.first_name
         await generate_cover(title, thumbnail)
-        file_path = await convert(youtube.download(url))        
+        file_path = await convert(youtube.download(url))
     else:
         query = ""
         for i in message.command[1:]:
             query += " " + str(i)
         print(query)
-        await lel.edit("🎸 *يتم المعالجة...**")
-        ydl_opts = {"format": "bestaudio/best"}
+        await lel.edit("🎵 **sending audio...**")
+        ydl_opts = {"format": "bestaudio[ext=m4a]"}
         try:
             results = YoutubeSearch(query, max_results=1).to_dict()
             url = f"https://youtube.com{results[0]['url_suffix']}"
             # print(results)
-            title = results[0]["title"][:40]
+            title = results[0]["title"][:60]
             thumbnail = results[0]["thumbnails"][0]
-            thumb_name = f"thumb{title}.jpg"
+            thumb_name = f"{title}.jpg"
             thumb = requests.get(thumbnail, allow_redirects=True)
             open(thumb_name, "wb").write(thumb.content)
             duration = results[0]["duration"]
+            results[0]["duration"]
             results[0]["url_suffix"]
-            views = results[0]["views"]
+            results[0]["views"]
 
         except Exception as e:
-            await lel.edit(
-                ""لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
-            )
+            await lel.edit("😕 **couldn't find song you requested**\n\n» **please provide the correct song name or include the artist's name as well**")
             print(str(e))
             return
 
         dlurl = url
-        dlurl=dlurl.replace("youtube","youtubepp")
+        dlurl = dlurl.replace("youtube", "youtubepp")
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸 القائمه ", callback_data="cmenu"),
-                    InlineKeyboardButton("🔻الغاء", callback_data="ccls")
-                ],[
-                    InlineKeyboardButton("القناه", url=f"https://t.me/{updateschannel}")
-                ]
+                    InlineKeyboardButton("🖱 Menu", callback_data="cmenu"),
+                    InlineKeyboardButton("🗑 Close", callback_data="ccls"),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "📣 Channel", url=f"https://t.me/{updateschannel}"
+                    )
+                ],
             ]
         )
-        requested_by = message.from_user.first_name
+        message.from_user.first_name
         await generate_cover(title, thumbnail)
         file_path = await convert(youtube.download(url))
     chat_id = chid
@@ -555,7 +534,7 @@ async def play(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"# ⃣ أغنيتك المطلوبة ** في قائمة الانتظار ** في الموضع {position}!",
+            caption=f"💡 **Track added to queue »** `{position}`\n\n🏷 **Name:** [{title[:35]}...]({url})\n⏱ **Duration:** `{duration}`\n🎧 **Request by:** {message.from_user.mention}",
             reply_markup=keyboard,
         )
         os.remove("final.png")
@@ -572,10 +551,9 @@ async def play(_, message: Message):
         callsmusic.pytgcalls.join_group_call(chat_id, file_path)
         await message.reply_photo(
             photo="final.png",
+            caption=f"🏷 **Name:** [{title[:60]}]({url})\n⏱ **Duration:** `{duration}`\n💡 **Status:** `Playing`\n"
+            + f"🎧 **Request by:** {message.from_user.mention}",
             reply_markup=keyboard,
-            caption="🎧 ** تشغيل ** الأغنية المطلوبة بواسطة {} عبر موسيقى youtube ، في قناة مرتبطة".format(
-                message.from_user.mention()
-            ),
         )
         os.remove("final.png")
         return await lel.delete()
