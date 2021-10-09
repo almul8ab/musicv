@@ -159,7 +159,7 @@ def r_ply(type_):
                 InlineKeyboardButton("⏭", "تخطي")
             ],
             [
-                InlineKeyboardButton(🎸 قائمه الاغاني"", "playlist"),
+                InlineKeyboardButton("🎸 قائمه الاغاني", "playlist"),
             ],
             [       
                 InlineKeyboardButton("🔻الغاء", "cls")
