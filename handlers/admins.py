@@ -1,4 +1,3 @@
-
 from asyncio import QueueEmpty
 
 from callsmusic import callsmusic
@@ -289,6 +288,4 @@ async def cbskip(_, query: CallbackQuery):
         qeue.pop(0)
     if not qeue:
         return
-    await query.edit_message_text(
-        "⏭ **You've skipped to the next song**", reply_markup=BACK_BUTTON
-    )
+    await query.edit_message_text("⏭ **You've skipped to the next song**", reply_markup=BACK_BUTTON)
