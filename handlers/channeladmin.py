@@ -1,72 +1,87 @@
 from asyncio.queues import QueueEmpty
-from config import que
+
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
+from config import que, BOT_USERNAME
+from cache.admins import admins
 from cache.admins import set
+from callsmusic import callsmusic
+from callsmusic.queues import queues
+from helpers.filters import command, other_filters
 from helpers.channelmusic import get_chat_id
 from helpers.decorators import authorized_users_only, errors
-from helpers.filters import command, other_filters
-from callsmusic import callsmusic
 
 
+@Client.on_message(command(["refresh", f"refresh@{BOT_USERNAME}"]) & other_filters)
+async def update_admin(client, message):
+    global admins
+    new_admins = []
+    new_ads = await client.get_chat_members(message.chat.id, filter="administrators")
+    for u in new_ads:
+        new_admins.append(u.user.id)
+    admins[message.chat.id] = new_admins
+    await message.reply_text(
+        "✅ Bot **reloaded correctly !**\n✅ **Admin list** has been **updated !**"
+    )
 
-@Client.on_message(filters.command(["channelpause","cpause"]) & filters.group & ~filters.edited)
+
+@Client.on_message(command(["cpause", f"cpause@{BOT_USERNAME}"]) & other_filters)
 @errors
 @authorized_users_only
-async def pause(_, message: Message):
+async def channel_pause(_, message: Message):
     try:
-      conchat = await _.get_chat(message.chat.id)
-      conid = conchat.linked_chat.id
-      chid = conid
+        conchat = await _.get_chat(message.chat.id)
+        conid = conchat.linked_chat.id
+        chid = conid
     except:
-      await message.reply("هل محادثتك متصلة بالفعل ?")
-      return    
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     chat_id = chid
     if (chat_id not in callsmusic.pytgcalls.active_calls) or (
         callsmusic.pytgcalls.active_calls[chat_id] == "paused"
     ):
-        await message.reply_text("❗ لا شيء يشغل !")
+        await message.reply_text("❌ **no music is currently playing**")
     else:
         callsmusic.pytgcalls.pause_stream(chat_id)
-        await message.reply_text("🗼 توقفت الموسيقى مؤقتًا")
+        await message.reply_text("▶ **Track paused.**\n\n• **To resume the playback, use the**\n» `/cresume` command.")
 
 
-@Client.on_message(filters.command(["channelresume","cresume"]) & filters.group & ~filters.edited)
+@Client.on_message(command(["cresume", f"cresume@{BOT_USERNAME}"]) & other_filters)
 @errors
 @authorized_users_only
-async def resume(_, message: Message):
+async def channel_resume(_, message: Message):
     try:
-      conchat = await _.get_chat(message.chat.id)
-      conid = conchat.linked_chat.id
-      chid = conid
+        conchat = await _.get_chat(message.chat.id)
+        conid = conchat.linked_chat.id
+        chid = conid
     except:
-      await message.reply("هل محادثتك متصلة بالفعل؟ ?")
-      return    
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     chat_id = chid
     if (chat_id not in callsmusic.pytgcalls.active_calls) or (
         callsmusic.pytgcalls.active_calls[chat_id] == "playing"
     ):
-        await message.reply_text("لا شيء متوقف!")
+        await message.reply_text("❌ **no music is currently playing**")
     else:
         callsmusic.pytgcalls.resume_stream(chat_id)
-        await message.reply_text("🗼 استؤنفت الموسيقى")
+        await message.reply_text("⏸ **Track resumed.**\n\n• **To pause the playback, use the**\n» `/cpause` command.")
 
 
-@Client.on_message(filters.command(["channelend","cend"]) & filters.group & ~filters.edited)
+@Client.on_message(command(["cend", f"cend@{BOT_USERNAME}"]) & other_filters)
 @errors
 @authorized_users_only
-async def stop(_, message: Message):
+async def channel_stop(_, message: Message):
     try:
-      conchat = await _.get_chat(message.chat.id)
-      conid = conchat.linked_chat.id
-      chid = conid
+        conchat = await _.get_chat(message.chat.id)
+        conid = conchat.linked_chat.id
+        chid = conid
     except:
-      await message.reply("هل محادثتك متصلة بالفعل")
-      return    
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     chat_id = chid
     if chat_id not in callsmusic.pytgcalls.active_calls:
-        await message.reply_text("❗ لا شيء في الدفق!")
+        await message.reply_text("❌ **no music is currently playing**")
     else:
         try:
             callsmusic.queues.clear(chat_id)
@@ -74,24 +89,24 @@ async def stop(_, message: Message):
             pass
 
         callsmusic.pytgcalls.leave_group_call(chat_id)
-        await message.reply_text("⏹ streaming ended!")
+        await message.reply_text("✅ **music playback has ended**")
 
 
-@Client.on_message(filters.command(["channelskip","cskip"]) & filters.group & ~filters.edited)
+@Client.on_message(command(["cskip", f"cskip@{BOT_USERNAME}"]) & other_filters)
 @errors
 @authorized_users_only
 async def skip(_, message: Message):
     global que
     try:
-      conchat = await _.get_chat(message.chat.id)
-      conid = conchat.linked_chat.id
-      chid = conid
+        conchat = await _.get_chat(message.chat.id)
+        conid = conchat.linked_chat.id
+        chid = conid
     except:
-      await message.reply("هل الدردشة متصلة بالفعل؟ ?")
-      return    
+        await message.reply("❌ `NOT_LINKED`\n\n• **The userbot could not play music, due to group not linked to channel yet.**")
+        return
     chat_id = chid
     if chat_id not in callsmusic.pytgcalls.active_calls:
-        await message.reply_text("هل الدردشة متصلة بالفعل؟")
+        await message.reply_text("❌ **no music is currently playing**")
     else:
         callsmusic.queues.task_done(chat_id)
 
@@ -107,24 +122,4 @@ async def skip(_, message: Message):
         skip = qeue.pop(0)
     if not qeue:
         return
-    await message.reply_text(f"-- تم تخطي ** {تخطي [0]} ** \ n- قيد التشغيل الآن ** {qeue [0] [0]} **")
-
-
-@Client.on_message(filters.command("admincache"))
-@errors
-async def admincache(client, message: Message):
-    try:
-      conchat = await client.get_chat(message.chat.id)
-      conid = conchat.linked_chat.id
-      chid = conid
-    except:
-      await message.reply("هل الدردشة متصلة بالفعل؟ ?")
-      return
-    set(
-        chid,
-        [
-            member.user
-            for member in await conchat.linked_chat.get_members(filter="administrators")
-        ],
-    )
-    await message.reply_text("✅ تحديث ذاكرة التخزين المؤقت المشرف!")
+    await message.reply_text("⏭ **You've skipped to the next song.**")
