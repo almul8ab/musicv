@@ -1,5 +1,3 @@
-
-
 from asyncio import QueueEmpty
 
 from callsmusic import callsmusic
