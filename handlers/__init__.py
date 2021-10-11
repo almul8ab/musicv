@@ -1,1 +1,1 @@
-"""Amort Music Plugins!"""
+"""DeTroitSogbot Plugins!"""
