@@ -1,23 +1,13 @@
 import os
 from time import time
-from sys import version_info
 from datetime import datetime
 
 from pyrogram import Client, filters
-from pyrogram import __version__ as __pyro_version__
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from config import BOT_NAME, BOT_USERNAME, GROUP_SUPPORT, OWNER_NAME, UPDATES_CHANNEL, ALIVE_NAME, ALIVE_IMG
+from config import BOT_NAME, BOT_USERNAME, GROUP_SUPPORT, OWNER_NAME, UPDATES_CHANNEL
 from helpers.decorators import sudo_users_only
 from helpers.filters import command
-from handlers import __version__
-
-
-__major__ = 0
-__minor__ = 2
-__micro__ = 1
-
-__python_version__ = f"{version_info[0]}.{version_info[1]}.{version_info[2]}"
 
 
 START_TIME = datetime.utcnow()
