@@ -96,7 +96,7 @@ async def addcchannel(client, message):
         invitelink = await client.export_chat_invite_link(chid)
     except:
         await message.reply_text(
-            ""<b> قم بترقيتي كمسؤول المجموعة أولاً! </ b>"",
+            "<b> قم بترقيتي كمسؤول المجموعة أولاً! </ b>",
         )
         return
 
