@@ -289,7 +289,8 @@ async def cbskip(_, query: CallbackQuery):
 # ban & unban function
 
 
-@Client.on_message(filters.command("b")& other_filters)
+@Client.on_message(command(["b"])& other_filters)
+@errors
 @authorized_users_only
 async def ban_user(_, message):
     is_admin = await admin_check(message)
@@ -317,7 +318,8 @@ async def ban_user(_, message):
             )
 
 
-@Client.on_message(filters.command("tb") & other_filters)
+@Client.on_message(command(["tb"]) & other_filters)
+@errors
 @authorized_users_only
 async def temp_ban_user(_, message):
     is_admin = await admin_check(message)
@@ -359,7 +361,8 @@ async def temp_ban_user(_, message):
             )
 
 
-@Client.on_message(filters.command(["ub", "um"]) & other_filters)
+@Client.on_message(command(["ub", "um"]) & other_filters)
+@errors
 @authorized_users_only
 async def un_ban_user(_, message):
     is_admin = await admin_check(message)
@@ -389,7 +392,8 @@ async def un_ban_user(_, message):
             )
 
 
-@Client.on_message(filters.command("m") & other_filters)
+@Client.on_message(command(["m"]) & other_filters)
+@errors
 async def mute_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:
@@ -418,7 +422,8 @@ async def mute_user(_, message):
             )
 
 
-@Client.on_message(filters.command("tm") & other_filters)
+@Client.on_message(command(["tm"]) & other_filters)
+@errors
 async def temp_mute_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:
