@@ -18,7 +18,6 @@ BG_IMAGE = getenv("BG_IMAGE", "https://telegra.ph/file/97b8759e86bf092bf2acb.png
 THUMB_IMG = getenv("THUMB_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
 AUD_IMG = getenv("AUD_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
 QUE_IMG = getenv("QUE_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
-AMORT_IMG = getenv("AMORT_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
 API_ID = int(getenv("API_ID"))
 API_HASH = getenv("API_HASH")
 BOT_USERNAME = getenv("BOT_USERNAME", "amortzmusicbot")
@@ -28,7 +27,6 @@ UPDATES_CHANNEL = getenv("UPDATES_CHANNEL", "KURD_BOTS")
 # isi dengan username kamu tanpa simbol @
 OWNER_NAME = getenv("OWNER_NAME", "HAMA_REFAAT")
 # fill with your nickname
-AMORT_NAME = getenv("AMORT_NAME", "Hama_Refaat")
 # fill with your id as the owner of the bot
 OWNER_ID = int(os.environ.get("OWNER_ID"))
 DATABASE_URL = os.environ.get("DATABASE_URL")  # fill with your mongodb url
