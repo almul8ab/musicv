@@ -256,7 +256,7 @@ async def m_cb(b, cb):
             await cb.answer("الدردشة ليست متصلة أو قيد التشغيل بالفعل", show_alert=True)
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
-            await cb.answer(""الموسيقى مستأنفة!")
+            await cb.answer("الموسيقى مستأنفة!")
     elif type_ == "cpuse":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
             callsmusic.pytgcalls.active_calls[chet_id] == "paused"
@@ -267,7 +267,7 @@ async def m_cb(b, cb):
 
             await cb.answer("music paused!")
     elif type_ == "ccls":
-        await cb.answer(قائمة مغلقة")
+        await cb.answer("قائمة مغلقة")
         await cb.message.delete()
 
     elif type_ == "cmenu":
@@ -379,7 +379,7 @@ async def play(_, message: Message):
                     # print(e)
                     await lel.edit(
                         f"<b> 🔴 خطأ في انتظار الفيضان 🔴 \ n لم يتمكن المستخدم {user.first_name} من الانضمام إلى قناتك بسبب الطلبات الكثيفة على userbot! تأكد من عدم حظر المستخدم في المجموعة."
-                        "\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
+                        f"\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
                     )
     try:
         await USER.get_chat(chid)
@@ -505,7 +505,7 @@ async def play(_, message: Message):
 
         except Exception as e:
             await lel.edit(
-                ""لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
+                "لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
             )
             print(str(e))
             return
@@ -554,9 +554,7 @@ async def play(_, message: Message):
         await message.reply_photo(
             photo="final.png",
             reply_markup=keyboard,
-            caption="🎧 ** تشغيل ** الأغنية المطلوبة بواسطة {} عبر موسيقى youtube ، في قناة مرتبطة".format(
-                message.from_user.mention()
-            ),
+            caption="🎧 ** تشغيل ** الأغنية المطلوبة بواسطة {} عبر موسيقى youtube ، في قناة مرتبطة".format(message.from_user.mention()),
         )
         os.remove("final.png")
         return await lel.delete()
