@@ -1,29 +1,36 @@
-
-
 from __future__ import unicode_literals
 
 import asyncio
 import math
 import os
 import time
-import wget
 from random import randint
 from urllib.parse import urlparse
 
 import aiofiles
 import aiohttp
 import requests
-import youtube_dl
-from yt_dlp import YoutubeDL
+import wget
+import yt_dlp
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import Message
 from youtube_search import YoutubeSearch
+from yt_dlp import YoutubeDL
 
-from helpers.filters import command
+from config import BOT_USERNAME as bn
 from helpers.decorators import humanbytes
-from config import DURATION_LIMIT, BOT_USERNAME as bn
+from helpers.filters import command
 
+
+ydl_opts = {
+        'format':'best',
+        'keepvideo':True,
+        'prefer_ffmpeg':False,
+        'geo_bypass':True,
+        'outtmpl':'%(title)s.%(ext)s',
+        'quite':True
+}
 
 @Client.on_message(command(["song", f"song@{bn}"]) & ~filters.edited)
 def song(_, message):
@@ -181,18 +188,6 @@ def time_formatter(milliseconds: int) -> str:
     )
     return tmp[:-2]
 
-
-ydl_opts = {
-    "format": "bestaudio/best",
-    "writethumbnail": True,
-    "postprocessors": [
-        {
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }
-    ],
-}
 
 
 def get_file_extension_from_url(url):
