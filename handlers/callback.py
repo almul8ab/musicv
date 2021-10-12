@@ -1,18 +1,10 @@
 
 
-from handlers.play import cb_admin_check
-from helpers.decorators import authorized_users_only
 from pyrogram import Client, filters
-from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
-from config import (
-    ASSISTANT_NAME,
-    BOT_NAME,
-    BOT_USERNAME,
-    GROUP_SUPPORT,
-    OWNER_NAME,
-    UPDATES_CHANNEL,
-)
-
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
+from helpers.decorators import authorized_users_only
+from config import BOT_NAME, BOT_USERNAME, OWNER_NAME, GROUP_SUPPORT, UPDATES_CHANNEL, ASSISTANT_NAME
+from handlers.play import cb_admin_check
 
 
 @Client.on_callback_query(filters.regex("cbstart"))
@@ -21,9 +13,9 @@ async def cbstart(_, query: CallbackQuery):
         f"""<b>🗼 **مرحبا , {query.message.from_user.mention} !** \n
 💭 **[{BOT_NAME}](https://t.me/{BOT_USERNAME}) يسمح لك بتشغيل الموسيقى على المجموعات من خلال الدردشات الصوتية في Telegram الجديدة!**
 
-🗼 **معرفة جميع الأوامر بوت وكيفية عملها من خلال النقر على زر » 📚 الأوامر !**
+ **معرفة جميع الأوامر بوت وكيفية عملها من خلال النقر على زر » 📚 الأوامر !**
 
-❔ **لمعرفة كيفية استخدام هذا بوت، يرجى الضغط على » ❓ زر الدليل الأساسي!**
+ كيفية استخدام هذا بوت، يرجى الضغط على » دليل المستخدم !**
 </b>""",
         reply_markup=InlineKeyboardMarkup(
             [ 
@@ -44,7 +36,7 @@ async def cbstart(_, query: CallbackQuery):
                         " قناه  الملفات", url=f"https://t.me/{GROUP_SUPPORT}"
                     ),
                     InlineKeyboardButton(
-                        "قناه لبسورس", url=f"https://t.me/{UPDATES_CHANNEL}")
+                        "قناه لسورس", url=f"https://t.me/{UPDATES_CHANNEL}")
                 ]
             ]
         ),
@@ -72,15 +64,15 @@ async def cbhelp(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton(
-                        "🦹🏻︙اومر الادمنيه", callback_data="cbadmin"
+                        "🦹🏻︙اوامر الادمنيه", callback_data="cbadmin"
                     ),
                     InlineKeyboardButton(
-                        "🐉︙اومر المطورين", callback_data="cbsudo"
+                        "🐉︙اوامر المطورين", callback_data="cbsudo"
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        "🐉︙اومر المالك", callback_data="cbowner"
+                        "🐉︙اوامر المالك", callback_data="cbowner"
                     )
                 ],
               
@@ -98,29 +90,35 @@ async def cbhelp(_, query: CallbackQuery):
 async def cbbasic(_, query: CallbackQuery):
     await query.edit_message_text(
         f"""<b>📍 هنا الأوامر الأساسية</b>
-- تشغيل الأغنية من اليوتيوب
-/play اسم الاغنيه :
-- تشغيل الأغنية مباشرة من اليوتيوب
-/ytp اسم الاغنيه: 
-دفق (الرد على الصوت) - تشغيل الأغنية باستخدام ملف صوتي /stream
-قائمة التشغيل - إظهار أغنية القائمة في قائمة الانتظار /playlist
-/song أغنية (اسم الأغنية) - تنزيل أغنية من youtube
-/search البحث (اسم الفيديو) - ابحث عن مقطع فيديو من youtube بالتفصيل
 ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
-/vsong (اسم الفيديو) - تنزيل الفيديو من youtube مفصل
-/ غنائي - (اسم الأغنية) مكشطة كلمات
-/vk (اسم الأغنية) - تنزيل الأغنية من الوضع المضمَّن
+- بحث عن اغنيه ( اسم الاغنية و /Play )
+- تشغيل الأغنية مباشرة من اليوتيوب 
+( أسم الاغنية و /Ytp ) .
+- تشغيل الأغنية باستخدام ملف صوتي 
+( /Stream ) . 
+- إظهار أغنية القائمة في قائمة الانتظار 
+( /Playlist )
+- تنزيل اغنية من اليوتيوب :
+( أسم الاغنية و /Vsong ) 
+للبحث عن مقطع فيديو باليوتيوب 
+( أسم الاغنية و /Search ) 
+- تنزيل فيديو من اليوتيوب بالتفصيل 
+( اسم الفيديو و / Vsong ) 
 ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
-/play - دفق الموسيقى على قناة الدردشة الصوتية
-/cplayer - إظهار الأغنية أثناء البث
-/cpause - إيقاف الموسيقى المتدفقة مؤقتًا
-/cresume - استئناف توقف البث مؤقتًا
-/cskip - تخطي التدفق إلى الأغنية التالية
-/cend - قم بإنهاء تدفق الموسيقى
-/admincache - قم بتحديث ذاكرة التخزين المؤقت للمسؤول
-/ubjoinc - قم بدعوة المساعد للانضمام إلى قناتك
+-تشغيل الموسيقى في الاتصال ( /Play )
+( /cplayer ) إظهار الأغنية أثناء البث -
+- إيقاف الموسيقى المشتغلة مؤقتًا 
+( /cpause )
+- استئناف توقف البث مؤقتاً ( /cresume )
+( /cskip ) تخطي الأغنية -
+( /cend ) قم بإنهاء تدفق الموسيقى -
+- تحديث الذاكرة المؤقتة :
+( /admincache )
+(/userbotjoin ) قم بدعوة المساعد
 
-🎪 __ by {BOT_NAME} __""",
+By DeTroitSogbot : 🎸
+
+ __""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -281,9 +279,9 @@ async def cbback(_, query: CallbackQuery):
                     InlineKeyboardButton("⏩ skip", callback_data="cbskip"),
                     InlineKeyboardButton("⏹ end", callback_data="cbend"),
                 ],
-                [InlineKeyboardButton("⛔ anti cmd", callback_data="cbdelcmds")],
-                [InlineKeyboardButton("🗼 group tools", callback_data="cbgtools")],
-                [InlineKeyboardButton("🔻 Close", callback_data="close")],
+                [InlineKeyboardButton("🎸︙اوامر المشرفين ", callback_data="cbdelcmds")],
+                [InlineKeyboardButton("🎸︙اعدادات المجموعه", callback_data="cbgtools")],
+                [InlineKeyboardButton("🔻 الغاء", callback_data="close")],
             ]
         ),
     )
@@ -331,7 +329,7 @@ async def cbdelcmds(_, query: CallbackQuery):
  2️⃣ لإيقاف تشغيل الميزة:
      »  `/delcmd off`
       
-⚡ __Powered by {BOT_NAME} __""",
+⚡  by {BOT_NAME} __""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -362,15 +360,15 @@ async def cbhelps(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton(
-                        "🦹🏻︙اومر الادمنيه", callback_data="cbadmin"
+                        "🦹🏻︙اوامر الادمنيه", callback_data="cbadmin"
                     ),
                     InlineKeyboardButton(
-                        "🐉︙اومر المطورين", callback_data="cbsudo"
+                        "🐉︙اوامر المطورين", callback_data="cbsudo"
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        "🐉︙اومر المالك", callback_data="cbowner"
+                        "🐉︙اوامر المالك", callback_data="cbowner"
                     )
                 ],
         

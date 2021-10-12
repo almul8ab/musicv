@@ -1,32 +1,26 @@
-import os
-import shutil
 import sys
+import os
+import time
 import traceback
-from functools import wraps
-from os import environ, execle
-
-import heroku3
+import asyncio
+import shutil
 import psutil
-from config import (
-    BOT_USERNAME,
-    GROUP_SUPPORT,
-    HEROKU_API_KEY,
-    HEROKU_APP_NAME,
-    HEROKU_URL,
-    OWNER_ID,
-    U_BRANCH,
-    UPSTREAM_REPO,
-)
-from git import Repo
-from git.exc import GitCommandError, InvalidGitRepositoryError
-from handlers.song import get_text, humanbytes
-from handlers import __version__
+
+from pyrogram import Client, filters
+from pyrogram.types import Message, Dialog, Chat
+from pyrogram.errors import UserAlreadyParticipant
+from datetime import datetime
+from functools import wraps
+from os import environ, execle, path, remove
+
+from callsmusic.callsmusic import client as pakaya
 from helpers.database import db
 from helpers.dbtools import main_broadcast_handler
 from helpers.decorators import sudo_users_only
-from helpers.filters import command
-from pyrogram import Client, filters
-from pyrogram.types import Message
+from handlers.song import humanbytes, get_text
+from git import Repo
+from git.exc import GitCommandError, InvalidGitRepositoryError, NoSuchPathError
+from config import BOT_USERNAME, OWNER_ID, SUDO_USERS, GROUP_SUPPORT, UPSTREAM_REPO, U_BRANCH, HEROKU_URL, HEROKU_API_KEY, HEROKU_APP_NAME
 
 
 # Stats Of Your Bot
