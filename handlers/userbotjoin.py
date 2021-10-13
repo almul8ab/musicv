@@ -1,12 +1,10 @@
 import asyncio
-
-from callsmusic.callsmusic import client as USER
-from config import BOT_USERNAME, SUDO_USERS
-from helpers.decorators import authorized_users_only, errors
-from helpers.filters import command
 from pyrogram import Client, filters
 from pyrogram.errors import UserAlreadyParticipant
-
+from helpers.filters import command
+from helpers.decorators import authorized_users_only, errors
+from callsmusic.callsmusic import client as USER
+from config import BOT_USERNAME, SUDO_USERS
 
 
 @Client.on_message(command(["userbotjoin", f"userbotjoin@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
@@ -38,7 +36,7 @@ async def addchannel(client, message):
         print(e)
         await message.reply_text(
             f"<b> 🛑 خطأ في انتظار الفيضان 🛑 \ n \ n تعذر على المستخدم {user.first_name} الانضمام إلى مجموعتك بسبب كثرة طلبات الانضمام إلى userbot."
-            f"\ n \ أو إضافة المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
+            "\ n \ أو إضافة المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
         )
         return
     await message.reply_text(
@@ -96,7 +94,7 @@ async def addcchannel(client, message):
         invitelink = await client.export_chat_invite_link(chid)
     except:
         await message.reply_text(
-            "<b> قم بترقيتي كمسؤول المجموعة أولاً! </ b>",
+            ""<b> قم بترقيتي كمسؤول المجموعة أولاً! </ b>",
         )
         return
 

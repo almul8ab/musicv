@@ -1,21 +1,24 @@
-from asyncio import QueueEmpty
 
+import traceback
+import asyncio
+from asyncio import QueueEmpty
+from config import que
+from pyrogram import Client, filters
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery, ChatPermissions
+
+from cache.admins import admins
+from helpers.channelmusic import get_chat_id
+from helpers.decorators import authorized_users_only, errors
+from handlers.play import cb_admin_check
+from helpers.filters import command, other_filters
 from callsmusic import callsmusic
 from callsmusic.queues import queues
-from config import BOT_USERNAME, que
-from cache.admins import admins
-from handlers.play import cb_admin_check
-from helpers.channelmusic import get_chat_id
-from helpers.dbtools import delcmd_is_on, delcmd_off, delcmd_on, handle_user_status
-from helpers.decorators import authorized_users_only, errors
-from helpers.filters import command, other_filters
-from pyrogram import Client, filters
-from pyrogram.types import (
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
+from config import LOG_CHANNEL, OWNER_ID, BOT_USERNAME, COMMAND_PREFIXES
+from helpers.database import db, dcmdb, Database
+from helpers.dbtools import handle_user_status, delcmd_is_on, delcmd_on, delcmd_off
+from helpers.helper_functions.admin_check import admin_check
+from helpers.helper_functions.extract_user import extract_user
+from helpers.helper_functions.string_handling import extract_time
 
 
 @Client.on_message()
@@ -55,7 +58,7 @@ async def controlset(_, message: Message):
             [
                 [
                     InlineKeyboardButton(
-                        "⏸ تورع", callback_data="cbpause"
+                        "⏸ توقف", callback_data="cbpause"
                     ),
                     InlineKeyboardButton(
                         "▶️ استأنف", callback_data="cbresume"
@@ -71,17 +74,17 @@ async def controlset(_, message: Message):
                 ],
                 [
                     InlineKeyboardButton(
-                        "⛔ مكافحة الاوامر", callback_data="cbdelcmds"
+                        "🎸︙اوامر المشرفين ", callback_data="cbdelcmds"
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        "🛄 أدوات المجموعة", callback_data="cbgtools"
+                        "🎸︙اعدادات المجموعه", callback_data="cbgtools"
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        "🗑 ", callback_data="close"
+                        "🔻الغاء", callback_data="close"
                     )
                 ]
             ]
@@ -289,8 +292,7 @@ async def cbskip(_, query: CallbackQuery):
 # ban & unban function
 
 
-@Client.on_message(command(["b"])& other_filters)
-@errors
+@Client.on_message(filters.command("b", COMMAND_PREFIXES))
 @authorized_users_only
 async def ban_user(_, message):
     is_admin = await admin_check(message)
@@ -318,8 +320,7 @@ async def ban_user(_, message):
             )
 
 
-@Client.on_message(command(["tb"]) & other_filters)
-@errors
+@Client.on_message(filters.command("tb", COMMAND_PREFIXES))
 @authorized_users_only
 async def temp_ban_user(_, message):
     is_admin = await admin_check(message)
@@ -361,8 +362,7 @@ async def temp_ban_user(_, message):
             )
 
 
-@Client.on_message(command(["ub", "um"]) & other_filters)
-@errors
+@Client.on_message(filters.command(["ub", "um"], COMMAND_PREFIXES))
 @authorized_users_only
 async def un_ban_user(_, message):
     is_admin = await admin_check(message)
@@ -392,8 +392,7 @@ async def un_ban_user(_, message):
             )
 
 
-@Client.on_message(command(["m"]) & other_filters)
-@errors
+@Client.on_message(filters.command("m", COMMAND_PREFIXES))
 async def mute_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:
@@ -422,8 +421,7 @@ async def mute_user(_, message):
             )
 
 
-@Client.on_message(command(["tm"]) & other_filters)
-@errors
+@Client.on_message(filters.command("tm", COMMAND_PREFIXES))
 async def temp_mute_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:

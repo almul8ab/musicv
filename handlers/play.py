@@ -1,38 +1,32 @@
 import os
-from asyncio.queues import QueueEmpty
-from os import path
-from typing import Callable
-
-import aiofiles
-import aiohttp
-import converter
+import json
 import ffmpeg
+import aiohttp
+import aiofiles
+import asyncio
 import requests
-from cache.admins import admins as a
-from callsmusic import callsmusic
-from callsmusic.callsmusic import client as USER
-from callsmusic.queues import queues
-from config import (
-    ASSISTANT_NAME,
-    BOT_NAME,
-    BOT_USERNAME,
-    DURATION_LIMIT,
-    GROUP_SUPPORT,
-    THUMB_IMG,
-    UPDATES_CHANNEL,
-    que,
-)
-from downloaders import youtube
-from helpers.admins import get_administrators
-from helpers.channelmusic import get_chat_id
-from helpers.decorators import authorized_users_only
-from helpers.filters import command, other_filters
-from helpers.gets import get_file_name
-from PIL import Image, ImageDraw, ImageFont
+import converter
+from os import path
+from asyncio.queues import QueueEmpty
 from pyrogram import Client, filters
-from pyrogram.errors import UserAlreadyParticipant
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from typing import Callable
+from helpers.channelmusic import get_chat_id
+from callsmusic import callsmusic
+from callsmusic.queues import queues
+from helpers.admins import get_administrators
 from youtube_search import YoutubeSearch
+from callsmusic.callsmusic import client as USER
+from pyrogram.errors import UserAlreadyParticipant
+from downloaders import youtube
+
+from config import que, THUMB_IMG, DURATION_LIMIT, BOT_USERNAME, BOT_NAME, UPDATES_CHANNEL, GROUP_SUPPORT, ASSISTANT_NAME
+from helpers.filters import command, other_filters
+from helpers.decorators import authorized_users_only
+from helpers.gets import get_file_name, get_url
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, Voice
+from converter.converter import convert
+from cache.admins import admins as a
+from PIL import Image, ImageFont, ImageDraw
 
 
 aiohttpsession = aiohttp.ClientSession()
@@ -105,7 +99,7 @@ async def generate_cover(title, thumbnail):
     font = ImageFont.truetype("etc/font.otf", 60)
     draw.text((40, 550), "Playing here...", (0, 0, 0), font=font)
     draw.text((40, 630), f"{title[:25]}...", (0, 0, 0), font=font)
-    img.save("final.png")
+    img.save("صوره بصيغه final.png")
     os.remove("temp.png")
     os.remove("background.png")
 
@@ -165,7 +159,7 @@ def r_ply(type_):
                 InlineKeyboardButton("⏭", "تخطي")
             ],
             [
-                InlineKeyboardButton("🎸 قائمه الاغاني", "playlist"),
+                InlineKeyboardButton("🎸︙قائمه التشغيل ", "playlist"),
             ],
             [       
                 InlineKeyboardButton("🔻الغاء", "cls")
@@ -205,13 +199,13 @@ async def music_onoff(_, message):
         return
     if len(message.command) != 2:
         await message.reply_text(
-            "**i'm only know** `/musicplayer on` **and** `/musicplayer off`"
+            "**لتعطيل او الفتح ارسل احد الامرين** `/musicplayer on` **and** `/musicplayer off`"
         )
         return
     status = message.text.split(None, 1)[1]
     message.chat.id
     if status == "ON" or status == "on" or status == "On":
-        lel = await message.reply("`processing...`")
+        lel = await message.reply("`يتم المعالجة...`")
         if not message.chat.id in DISABLED_GROUPS:
             await lel.edit("**تم تنشيط مشغل الموسيقى بالفعل.**")
             return
@@ -221,7 +215,7 @@ async def music_onoff(_, message):
         )
 
     elif status == "OFF" or status == "off" or status == "Off":
-        lel = await message.reply("`processing...`")
+        lel = await message.reply("`يتم المعالجة...`")
         
         if message.chat.id in DISABLED_GROUPS:
             await lel.edit("**مشغل الموسيقى معطل بالفعل.**")
@@ -232,7 +226,7 @@ async def music_onoff(_, message):
         )
     else:
         await message.reply_text(
-            "**i'm only know** `/musicplayer on` **and** `/musicplayer off`"
+            "**لتعطيل او الفتح ارسل احد الامرين** `/musicplayer on` **and** `/musicplayer off`"
         )
 
 
@@ -375,11 +369,11 @@ async def m_cb(b, cb):
                 
                 ],
                 [
-                    InlineKeyboardButton("🎸 قائمه الاغاني", "playlist"),
+                    InlineKeyboardButton("🎸︙حفض في قائمه التشغيل", "playlist"),
                 
                 ],
                 [       
-                    InlineKeyboardButton("🎸 قائمه الاغاني", "cls")
+                    InlineKeyboardButton("🔻الغاء", "cls")
                 ]        
             ]
         )
@@ -426,7 +420,7 @@ async def play(_, message: Message):
     global useer
     if message.chat.id in DISABLED_GROUPS:
         return    
-    lel = await message.reply("🎸 ** جاري البحث ... **")
+    lel = await message.reply("🎸 ** جاري التحميل ... **")
     administrators = await get_administrators(message.chat)
     chid = message.chat.id
     try:
@@ -450,8 +444,7 @@ async def play(_, message: Message):
                     invitelink = await _.export_chat_invite_link(chid)
                 except:
                     await lel.edit(
-                        "<b>🎸 To use me, I need to be an Administrator with the permissions:\n\n» ❌ __Delete messages__\n» ❌ __Ban users__\n» ❌ __Add users__\n» ❌ __Manage voice chat__\n\n**Then type /reload</b>",
-                    )
+"<b> 🎸 لاستخدامي ، أحتاج إلى أن أكون مسؤولاً مع الأذونات: \ n \ n» 🍥 __ حذف الرسائل __ \ n »🦹🏻 __منع المستخدمين __ \ n» 🗽 __إضافة مستخدمين __ \ n »🗼 __إدارة الدردشة الصوتية __ \ n \ n ** ثم اكتب / أعد التحميل </ b> "،                    )
                     return
                 try:
                     await USER.join_chat(invitelink)
@@ -532,7 +525,7 @@ async def play(_, message: Message):
         )
     elif urls:
         query = toxt
-        await lel.edit("🎸 **جاري لبحث...**")
+        await lel.edit("🎸 **جاري التحميل ...**")
         ydl_opts = {"format": "bestaudio[ext=m4a]"}
         try:
             results = YoutubeSearch(query, max_results=1).to_dict()
@@ -588,17 +581,17 @@ async def play(_, message: Message):
             toxxt = "\n"
             j = 0
             user = user_name
-            emojilist = ["< 1 >","< 1 >","< 3 >","< 4 >","< 5 >"]
+            emojilist = ["< 1 >","< 2 >","< 3 >","< 4 >","< 5 >"]
             while j < 5:
                 toxxt += f"{emojilist[j]} [{results[j]['title'][:25]}...](https://youtube.com{results[j]['url_suffix']})\n"
-                toxxt += f" ├ 🍥 **Duration** - {results[j]['duration']}\n"
-                toxxt += f" └ 🗼⚡ __Powered by {BOT_NAME} AI__\n\n"
+                toxxt += f"  VO!CE T!me➧:** - {results[j]['duration']}\n"
+                toxxt += f"  JO!N ➧: @DD0DD ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n"
                 j += 1            
             keyboard = InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton("< 1 >", callback_data=f'plll 0|{query}|{user_id}'),
-                        InlineKeyboardButton("< 1 >", callback_data=f'plll 1|{query}|{user_id}'),
+                        InlineKeyboardButton("< 2 >", callback_data=f'plll 1|{query}|{user_id}'),
                         InlineKeyboardButton("< 3 >", callback_data=f'plll 2|{query}|{user_id}'),
                     ],
                     [
@@ -643,7 +636,7 @@ async def play(_, message: Message):
             keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸 قائمه الاغاني", callback_data="menu"),
+                    InlineKeyboardButton("🎸︙قائمه التشغيل ", callback_data="menu"),
                     InlineKeyboardButton("🔻الغاء", callback_data="cls"),
                 ],[
                     InlineKeyboardButton("🎸 القناه", url=f"https://t.me/{UPDATES_CHANNEL}")
@@ -663,7 +656,7 @@ async def play(_, message: Message):
         appendable = [s_name, r_by, loc]
         qeue.append(appendable)
         await message.reply_photo(
-            photo="final.png",
+            photo="صوره بصيغه final.png",
             caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🎪 ** Name: ** [{title [: 80]}] ({url}) \ n🗼 ** المدة: **` {duration} `\ n🍥 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
@@ -679,15 +672,15 @@ async def play(_, message: Message):
         try:
             callsmusic.pytgcalls.join_group_call(chat_id, file_path)
         except:
-            await lel.edit("🎸 ** لم يتم العثور على الدردشة الصوتية ** \ n \ n »الرجاء تشغيل الدردشة الصوتية أولاً")
+            await lel.edit("🎸 ** لم يتم العثور على الدردشة الصوتية الرجاء تشغيل الدردشة الصوتية أولاً")
             return
         await message.reply_photo(
-            photo="final.png",
+            photo="صوره بصيغه final.png",
             caption=f"🎸 **الاسم:** [{title[:80]}]({url})\n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`\n" \
                    +f"🦹🏻 **بواسطه:** {message.from_user.mention}",
             reply_markup=keyboard
         )
-        os.remove("final.png")
+        os.remove("صوره بصيغه final.png")
         return await lel.delete()
 
 
@@ -700,7 +693,7 @@ async def lol_cb(b, cb):
     try:
         x, query, useer_id = typed_.split("|")      
     except:
-        await cb.message.edit("🎸  ** تعذر العثور على الأغنية التي طلبتها ** \ n \ n »** يرجى تقديم اسم الأغنية الصحيح أو تضمين اسم الفنان أيضًا**")
+        await cb.message.edit("🎸  ** تعذر العثور على الأغنية التي طلبتها  يرجى تقديم اسم الأغنية الصحيح أو تضمين اسم الفنان أيضًا**")
         return
     useer_id = int(useer_id)
     if cb.from_user.id != useer_id:
@@ -741,7 +734,7 @@ async def lol_cb(b, cb):
     keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸 قائمه الاغاني", callback_data="menu"),
+                    InlineKeyboardButton("🎸︙قائمه التشغيل  ", callback_data="menu"),
                     InlineKeyboardButton("🔻الغاء", callback_data="cls"),
                 ],[
                     InlineKeyboardButton("🎪القناه", url=f"https://t.me/{UPDATES_CHANNEL}")
@@ -765,7 +758,7 @@ async def lol_cb(b, cb):
         await cb.message.delete()
         await b.send_photo(
         chat_id,
-        photo="final.png",
+        photo="صوره بصيغه final.png",
         caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🗼 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {r_by.mention}",
         reply_markup=keyboard,
         )
@@ -784,13 +777,13 @@ async def lol_cb(b, cb):
         await cb.message.delete()
         await b.send_photo(
         chat_id,
-        photo="final.png",
+        photo="صوره بصيغه final.png",
         caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) \ n🍥 ** Duration: ** `{duration}` \ n🗼 ** الحالة: ** `قيد التشغيل` \ n" \
                +f"🎪 **طلب بواسطة:** {r_by.mention}",
         reply_markup=keyboard,
         )
-    if path.exists("final.png"):
-        os.remove("final.png")
+    if path.exists("صوره بصيغه final.png"):
+        os.remove("صوره بصيغه final.png")
 
 
 @Client.on_message(command(["ytp", f"ytp@{BOT_USERNAME}"]) & other_filters)
@@ -798,7 +791,7 @@ async def ytplay(_, message: Message):
     global que
     if message.chat.id in DISABLED_GROUPS:
         return
-    lel = await message.reply("🎸 **جارس البحث...**")
+    lel = await message.reply("🎸 **جارس التحميل...**")
     administrators = await get_administrators(message.chat)
     chid = message.chat.id
 
@@ -847,7 +840,7 @@ async def ytplay(_, message: Message):
         await USER.get_chat(chid)
     except:
         await lel.edit(
-            f"🎸 ** تم حظر userbot في هذه المجموعة! ** \ n \ n ** اطلب من المشرف إلغاء حظر @ {ASSISTANT_NAME} وأضف إلى هذه المجموعة مرة أخرى يدويًا.**"
+            f"🎸 ** تم حظر userbot في هذه المجموعة! اطلب من المشرف إلغاء حظر @ {ASSISTANT_NAME} وأضف إلى هذه المجموعة مرة أخرى يدويًا.**"
         )
         return
     
@@ -874,7 +867,7 @@ async def ytplay(_, message: Message):
         views = results[0]["views"]
 
     except Exception as e:
-        await lel.edit("🎸 ** تعذر العثور على الأغنية التي طلبتها ** \ n \ n »** يرجى تقديم اسم الأغنية الصحيح أو تضمين اسم الفنان أيضًا **")
+        await lel.edit("🎸 ** تعذر العثور على الأغنية التي طلبتها  يرجى تقديم اسم الأغنية الصحيح أو تضمين اسم الفنان أيضًا **")
         print(str(e))
         return
     try:
@@ -894,7 +887,7 @@ async def ytplay(_, message: Message):
     keyboard = InlineKeyboardMarkup(
             [   
                 [
-                    InlineKeyboardButton("🎸 قائمه الاغاني", callback_data="menu"),
+                    InlineKeyboardButton("🎸︙قائمه التشغيل ", callback_data="menu"),
                     InlineKeyboardButton("🔻الغاء", callback_data="cls"),
 
                 ],
@@ -917,7 +910,7 @@ async def ytplay(_, message: Message):
         appendable = [s_name, r_by, loc]
         qeue.append(appendable)
         await message.reply_photo(
-            photo="final.png",
+            photo="صوره بصيغه final.png",
             caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ 🗼n🏷 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
@@ -936,10 +929,10 @@ async def ytplay(_, message: Message):
             await lel.edit("🎸 **voice chat not found**\n\n» please turn on the voice chat first")
             return
         await message.reply_photo(
-            photo="final.png",
+            photo="صوره بصيغه final.png",
             caption=f"🗼 ** الاسم: ** [{title [: 80]}] ({url}) \ n🍥 ** Duration: ** `{duration}` \ n🎸 ** الحالة: ** `قيد التشغيل` \ n" \
                   +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
             reply_markup=keyboard,
         )
-        os.remove("final.png")
+        os.remove("صوره بصيغه final.png")
         return await lel.delete()

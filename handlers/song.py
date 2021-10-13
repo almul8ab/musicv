@@ -1,65 +1,56 @@
 
+
 from __future__ import unicode_literals
 
 import asyncio
 import math
 import os
 import time
+import wget
 from random import randint
 from urllib.parse import urlparse
 
 import aiofiles
 import aiohttp
 import requests
-import wget
-import yt_dlp
+import youtube_dl
+from yt_dlp import YoutubeDL
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import Message
 from youtube_search import YoutubeSearch
-from yt_dlp import YoutubeDL
 
-from config import BOT_USERNAME as bn
-from helpers.decorators import humanbytes
 from helpers.filters import command
+from helpers.decorators import humanbytes
+from config import DURATION_LIMIT, BOT_USERNAME as bn
 
 
-ydl_opts = {
-        'format':'best',
-        'keepvideo':True,
-        'prefer_ffmpeg':False,
-        'geo_bypass':True,
-        'outtmpl':'%(title)s.%(ext)s',
-        'quite':True
-}
-
-
-@Client.on_message(command(["audio", f"audio@{bn}"]) & ~filters.edited)
+@Client.on_message(command(["song", f"song@{bn}"]) & ~filters.edited)
 def song(_, message):
     query = " ".join(message.command[1:])
-    m = message.reply("🔎🎸 جاري البحث عن الاغنيه...")
+    m = message.reply("🎸 جاري البحث عن الاغنيه...")
     ydl_ops = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f"thumb{title}.jpg"
+        thumb_name = f"thumb-{title}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
         open(thumb_name, "wb").write(thumb.content)
         duration = results[0]["duration"]
 
     except Exception as e:
-        m.edit("❌  لم يتم العثور على الأغنية.  \n\n»** يرجى إعطاء اسم أغنية صالح. **.")
+        m.edit("❌ ** لم يتم العثور على الأغنية. ** \ n \ n »** يرجى إعطاء اسم أغنية صالح. **")
         print(str(e))
         return
-    m.edit("📥جارتحمیل صوت...")
+    m.edit("🗼 جاري التحميل")
     try:
-        with yt_dlp.YoutubeDL(ydl_ops) as ydl:
+        with youtube_dl.YoutubeDL(ydl_ops) as ydl:
             info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
-        rep = f"**🎧 Uploader @{bn}**"
+        rep = f"🗼 **جاري الرفع @{bn}**"
         secmul, dur, dur_arr = 1, 0, duration.split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
             dur += int(float(dur_arr[i])) * secmul
@@ -182,13 +173,26 @@ def time_formatter(milliseconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
     tmp = (
-        ((str(days) + " day(s), ") if days else "")
-        + ((str(hours) + " hour(s), ") if hours else "")
-        + ((str(minutes) + " minute(s), ") if minutes else "")
-        + ((str(seconds) + " second(s), ") if seconds else "")
-        + ((str(milliseconds) + " millisecond(s), ") if milliseconds else "")
+            ((str(days) + " day(s), ") if days else "")
+            + ((str(hours) + " hour(s), ") if hours else "")
+            + ((str(minutes) + " minute(s), ") if minutes else "")
+            + ((str(seconds) + " second(s), ") if seconds else "")
+            + ((str(milliseconds) + " millisecond(s), ") if milliseconds else "")
     )
     return tmp[:-2]
+
+
+ydl_opts = {
+    "format": "bestaudio/best",
+    "writethumbnail": True,
+    "postprocessors": [
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }
+    ],
+}
 
 
 def get_file_extension_from_url(url):
@@ -216,17 +220,15 @@ def time_to_seconds(times):
     return sum(int(x) * 60 ** i for i, x in enumerate(reversed(stringt.split(":"))))
 
 
-@Client.on_message(
-    command(["vsong", f"vsong@{bn}", "video", f"video@{bn}"]) & ~filters.edited
-)
+@Client.on_message(command(["vsong", f"vsong@{bn}", "video", f"video@{bn}"]) & ~filters.edited)
 async def vsong(client, message):
     ydl_opts = {
-        "format": "best",
-        "keepvideo": True,
-        "prefer_ffmpeg": False,
-        "geo_bypass": True,
-        "outtmpl": "%(title)s.%(ext)s",
-        "quite": True,
+        'format':'best',
+        'keepvideo':True,
+        'prefer_ffmpeg':False,
+        'geo_bypass':True,
+        'outtmpl':'%(title)s.%(ext)s',
+        'quite':True
     }
     query = " ".join(message.command[1:])
     try:
@@ -234,30 +236,29 @@ async def vsong(client, message):
         link = f"https://youtube.com{results[0]['url_suffix']}"
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f"{title}.jpg"
+        thumb_name = f"thumb{title}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
         open(thumb_name, "wb").write(thumb.content)
-        results[0]["duration"]
+        duration = results[0]["duration"]
         results[0]["url_suffix"]
         results[0]["views"]
-        message.from_user.mention
+        rby = message.from_user.mention
     except Exception as e:
         print(e)
     try:
-        msg = await message.reply("📥 ** جارتحمیل فیدیو...**")
+        msg = await message.reply("📥 **downloading video...**")
         with YoutubeDL(ydl_opts) as ytdl:
             ytdl_data = ytdl.extract_info(link, download=True)
             file_name = ytdl.prepare_filename(ytdl_data)
     except Exception as e:
         return await msg.edit(f"🚫 **error:** {e}")
     preview = wget.download(thumbnail)
-    await msg.edit("📤 **جار تمیل فیدیو...**")
+    await msg.edit("📤 **uploading video...**")
     await message.reply_video(
         file_name,
         duration=int(ytdl_data["duration"]),
         thumb=preview,
-        caption=ytdl_data["title"],
-    )
+        caption=ytdl_data['title'])
     try:
         os.remove(file_name)
         await msg.delete()

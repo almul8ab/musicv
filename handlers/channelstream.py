@@ -1,28 +1,47 @@
 # Copyright (C) 2021 AmortMusic Project
 
+import json
 import os
 from os import path
+from typing import Callable
 
+import aiofiles
+import aiohttp
+import ffmpeg
 import requests
+import wget
+from PIL import Image, ImageDraw, ImageFont
 from pyrogram import Client, filters
 from pyrogram.errors import UserAlreadyParticipant
+from pyrogram.types import Voice
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
-
+from handlers.play import generate_cover
+from handlers.play import cb_admin_check
+from handlers.play import transcode
+from handlers.play import convert_seconds
+from handlers.play import time_to_seconds
+from handlers.play import changeImageSize
+from config import BOT_NAME as bn
+from config import DURATION_LIMIT
+from config import UPDATES_CHANNEL as updateschannel
+from config import que
+from cache.admins import admins as a
+from helpers.errors import DurationLimitError
+from helpers.decorators import errors
+from helpers.admins import get_administrators
+from helpers.channelmusic import get_chat_id
+from helpers.decorators import authorized_users_only
+from helpers.filters import command, other_filters
+from helpers.gets import get_file_name
 from callsmusic import callsmusic
 from callsmusic.callsmusic import client as USER
-from callsmusic.queues import queues
-from config import que, DURATION_LIMIT, BOT_USERNAME, UPDATES_CHANNEL as updateschannel
 from converter.converter import convert
 from downloaders import youtube
-from handlers.play import cb_admin_check, generate_cover
-from helpers.filters import command, other_filters
-from helpers.admins import get_administrators
-from helpers.decorators import authorized_users_only
-from helpers.errors import DurationLimitError
-from helpers.gets import get_file_name
+from callsmusic.queues import queues
 
 chat_id = None
+
 
 
 @Client.on_message(filters.command(["channelplaylist","cplaylist"]) & filters.group & ~filters.edited)
@@ -256,7 +275,7 @@ async def m_cb(b, cb):
             await cb.answer("الدردشة ليست متصلة أو قيد التشغيل بالفعل", show_alert=True)
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
-            await cb.answer("الموسيقى مستأنفة!")
+            await cb.answer(""الموسيقى مستأنفة!")
     elif type_ == "cpuse":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
             callsmusic.pytgcalls.active_calls[chet_id] == "paused"
@@ -267,7 +286,7 @@ async def m_cb(b, cb):
 
             await cb.answer("music paused!")
     elif type_ == "ccls":
-        await cb.answer("قائمة مغلقة")
+        await cb.answer(قائمة مغلقة")
         await cb.message.delete()
 
     elif type_ == "cmenu":
@@ -379,7 +398,7 @@ async def play(_, message: Message):
                     # print(e)
                     await lel.edit(
                         f"<b> 🔴 خطأ في انتظار الفيضان 🔴 \ n لم يتمكن المستخدم {user.first_name} من الانضمام إلى قناتك بسبب الطلبات الكثيفة على userbot! تأكد من عدم حظر المستخدم في المجموعة."
-                        f"\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
+                        "\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
                     )
     try:
         await USER.get_chat(chid)
@@ -505,7 +524,7 @@ async def play(_, message: Message):
 
         except Exception as e:
             await lel.edit(
-                "لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
+                ""لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
             )
             print(str(e))
             return
@@ -554,7 +573,9 @@ async def play(_, message: Message):
         await message.reply_photo(
             photo="final.png",
             reply_markup=keyboard,
-            caption="🎧 ** تشغيل ** الأغنية المطلوبة بواسطة {} عبر موسيقى youtube ، في قناة مرتبطة".format(message.from_user.mention()),
+            caption="🎧 ** تشغيل ** الأغنية المطلوبة بواسطة {} عبر موسيقى youtube ، في قناة مرتبطة".format(
+                message.from_user.mention()
+            ),
         )
         os.remove("final.png")
         return await lel.delete()

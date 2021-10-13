@@ -1,10 +1,9 @@
 import logging
-
-from config import BOT_USERNAME
-from helpers.filters import command
-from pyrogram import Client
 from pyrogram.types import Message
 from youtube_search import YoutubeSearch
+from pyrogram import Client as app
+from helpers.filters import command
+from config import BOT_USERNAME
 
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
-@Client.on_message(command(["search", f"search@{BOT_USERNAME}"]))
+@app.on_message(command(["search", f"search@{BOT_USERNAME}"]))
 async def ytsearch(_, message: Message):
     try:
         if len(message.command) < 2:
@@ -27,7 +26,7 @@ async def ytsearch(_, message: Message):
             text += f"🗼 **الاسم:** __{results[i]['title']}__\n"
             text += f"🍥 **الوقت:** `{results[i]['duration']}`\n"
             text += f"🦹🏻 **المشاهدات:** `{results[i]['views']}`\n"
-            text += f"🗽 **القفناه:** {results[i]['channel']}\n"
+            text += f"🗽 **القناه:** {results[i]['channel']}\n"
             text += f"🎟: https://www.youtube.com{results[i]['url_suffix']}\n\n"
             i += 1
         await m.edit(text, disable_web_page_preview=True)
