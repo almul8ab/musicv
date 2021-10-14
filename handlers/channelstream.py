@@ -184,7 +184,7 @@ async def p_cb(b, cb):
 async def m_cb(b, cb):
     global que
     if (
-        cb.message.chat.title.startswith("قناه الاغاني: ")
+        cb.message.chat.title.startswith("Channel Music : ")
         and chat.title[14:].isnumeric()
     ):
         chet_id = int(chat.title[13:])
@@ -218,14 +218,14 @@ async def m_cb(b, cb):
 
     elif type_ == "cplay":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
-            callsmusic.pytgcalls.active_calls[chet_id] == "مشغله"
+            callsmusic.pytgcalls.active_calls[chet_id] == "playing"
         ):
             await cb.answer("الدردشة غير متصله!", show_alert=True)
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
             await cb.answer("استؤنفت الموسيقى!")
             await cb.message.edit(
-                updated_stats(conv, qeue), reply_markup=r_ply("وقفة")
+                updated_stats(conv, qeue), reply_markup=r_ply("pause")
             )
 
     elif type_ == "cplaylist":
@@ -346,7 +346,7 @@ async def play(_, message: Message):
     try:
         user = await USER.get_me()
     except:
-        user.first_name = "المساعد"
+        user.first_name = "help"
     usar = user
     wew = usar.id
     try:
@@ -355,7 +355,7 @@ async def play(_, message: Message):
     except:
         for administrator in administrators:
             if administrator == message.from_user.id:
-                if message.chat.title.startswith("قناه الاغاني: "):
+                if message.chat.title.startswith("Channel Music: "):
                     await lel.edit(
                         "<b> تذكر إضافة مساعد إلى قناتك </ b>",
                     )
@@ -381,7 +381,7 @@ async def play(_, message: Message):
                     # print(e)
                     await lel.edit(
                         f"<b> 🔴 خطأ في انتظار الفيضان 🔴 \ n لم يتمكن المستخدم {user.first_name} من الانضمام إلى قناتك بسبب الطلبات الكثيفة على userbot! تأكد من عدم حظر المستخدم في المجموعة."
-                        "\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
+                        f"\ n \ n أو أضف المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
                     )
     try:
         await USER.get_chat(chid)
