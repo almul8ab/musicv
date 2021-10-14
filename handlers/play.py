@@ -309,7 +309,7 @@ async def m_cb(b, cb):
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
             await cb.answer("متوقف مؤقتا!")
-            await cb.message.edit(updated_stats(m_chat, qeue), reply_markup=r_ply("متوقفه"))
+            await cb.message.edit(updated_stats(m_chat, qeue), reply_markup=r_ply("pause"))
 
     elif type_ == "playlist":
         queue = que.get(cb.message.chat.id)
@@ -591,7 +591,7 @@ async def play(_, message: Message):
             while j < 5:
                 toxxt += f"{emojilist[j]} [{results[j]['title'][:25]}...](https://youtube.com{results[j]['url_suffix']})\n"
                 toxxt += f"  VO!CE T!me➧:** - {results[j]['duration']}\n"
-                toxxt += f"  JO!N ➧: @DD0DD ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n"
+                toxxt += f"  JO!N ➧: @DD0DD\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n"
                 j += 1            
             keyboard = InlineKeyboardMarkup(
                 [
@@ -662,7 +662,7 @@ async def play(_, message: Message):
         appendable = [s_name, r_by, loc]
         qeue.append(appendable)
         await message.reply_photo(
-            photo="صوره بصيغه final.png",
+            photo="final.png",
             caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🎪 ** Name: ** [{title [: 80]}] ({url}) \ n🗼 ** المدة: **` {duration} `\ n🍥 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
@@ -681,12 +681,12 @@ async def play(_, message: Message):
             await lel.edit("🎸 ** لم يتم العثور على الدردشة الصوتية الرجاء تشغيل الدردشة الصوتية أولاً")
             return
         await message.reply_photo(
-            photo="صوره بصيغه final.png",
+            photo="final.png",
             caption=f"🎸 **الاسم:** [{title[:80]}]({url})\n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`\n" \
                    +f"🦹🏻 **بواسطه:** {message.from_user.mention}",
             reply_markup=keyboard
         )
-        os.remove("صوره بصيغه final.png")
+        os.remove("final.png")
         return await lel.delete()
 
 
@@ -764,7 +764,7 @@ async def lol_cb(b, cb):
         await cb.message.delete()
         await b.send_photo(
         chat_id,
-        photo="صوره بصيغه final.png",
+        photo="final.png",
         caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🗼 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {r_by.mention}",
         reply_markup=keyboard,
         )
@@ -783,13 +783,13 @@ async def lol_cb(b, cb):
         await cb.message.delete()
         await b.send_photo(
         chat_id,
-        photo="صوره بصيغه final.png",
+        photo="final.png",
         caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) \ n🍥 ** Duration: ** `{duration}` \ n🗼 ** الحالة: ** `قيد التشغيل` \ n" \
                +f"🎪 **طلب بواسطة:** {r_by.mention}",
         reply_markup=keyboard,
         )
-    if path.exists("صوره بصيغه final.png"):
-        os.remove("صوره بصيغه final.png")
+    if path.exists("final.png"):
+        os.remove("final.png")
 
 
 @Client.on_message(command(["ytp", f"ytp@{BOT_USERNAME}"]) & other_filters)
