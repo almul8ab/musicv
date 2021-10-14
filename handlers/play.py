@@ -104,7 +104,7 @@ async def generate_cover(title, thumbnail):
     font = ImageFont.truetype("etc/font.otf", 60)
     draw.text((40, 550), "Playing here...", (0, 0, 0), font=font)
     draw.text((40, 630), f"{title[:25]}...", (0, 0, 0), font=font)
-    img.save("صوره بصيغه final.png")
+    img.save("final.png")
     os.remove("temp.png")
     os.remove("background.png")
 
@@ -274,7 +274,7 @@ async def p_cb(b, cb):
 async def m_cb(b, cb):
     global que   
     if (
-        cb.message.chat.title.startswith("قناه الاغاني: ")
+        cb.message.chat.title.startswith("Channel Music : ")
         and chat.title[14:].isnumeric()
     ):
         chet_id = int(chat.title[13:])
@@ -916,7 +916,7 @@ async def ytplay(_, message: Message):
         appendable = [s_name, r_by, loc]
         qeue.append(appendable)
         await message.reply_photo(
-            photo="صوره بصيغه final.png",
+            photo="final.png",
             caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ 🗼n🏷 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
@@ -935,10 +935,10 @@ async def ytplay(_, message: Message):
             await lel.edit("🎸 **voice chat not found**\n\n» please turn on the voice chat first")
             return
         await message.reply_photo(
-            photo="صوره بصيغه final.png",
+            photo="final.png",
             caption=f"🗼 ** الاسم: ** [{title [: 80]}] ({url}) \ n🍥 ** Duration: ** `{duration}` \ n🎸 ** الحالة: ** `قيد التشغيل` \ n" \
                   +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
             reply_markup=keyboard,
         )
-        os.remove("صوره بصيغه final.png")
+        os.remove("final.png")
         return await lel.delete()
