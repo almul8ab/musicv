@@ -14,20 +14,19 @@ admins = {}
 SESSION_NAME = getenv("SESSION_NAME", "session")
 BOT_TOKEN = getenv("BOT_TOKEN")
 BOT_NAME = getenv("BOT_NAME", "amort Music")
-BG_IMAGE = getenv("BG_IMAGE", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
-THUMB_IMG = getenv("THUMB_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
-AUD_IMG = getenv("AUD_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
-QUE_IMG = getenv("QUE_IMG", "https://telegra.ph/file/97b8759e86bf092bf2acb.png")
+BG_IMAGE = getenv("BG_IMAGE", "https://telegra.ph/file/c1d7f3b5cc2c8e119ef96.jpg")
+THUMB_IMG = getenv("THUMB_IMG", "https://telegra.ph/file/c1d7f3b5cc2c8e119ef96.jpg")
+AUD_IMG = getenv("AUD_IMG", "https://telegra.ph/file/c1d7f3b5cc2c8e119ef96.jpg")
+QUE_IMG = getenv("QUE_IMG", "https://telegra.ph/file/c1d7f3b5cc2c8e119ef96.jpg")
 API_ID = int(getenv("API_ID"))
 API_HASH = getenv("API_HASH")
 BOT_USERNAME = getenv("BOT_USERNAME", "amortzmusicbot")
 ASSISTANT_NAME = getenv("ASSISTANT_NAME", "amortassistant")
 GROUP_SUPPORT = getenv("GROUP_SUPPORT", "kurd_botschat")
 UPDATES_CHANNEL = getenv("UPDATES_CHANNEL", "KURD_BOTS")
-# isi dengan username kamu tanpa simbol @
+
 OWNER_NAME = getenv("OWNER_NAME", "HAMA_REFAAT")
-# fill with your nickname
-# fill with your id as the owner of the bot
+
 OWNER_ID = int(os.environ.get("OWNER_ID"))
 DATABASE_URL = os.environ.get("DATABASE_URL")  # fill with your mongodb url
 # make a private channel and get the channel id
@@ -42,6 +41,5 @@ U_BRANCH = "main"
 HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
 HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
 UPSTREAM_REPO = os.environ.get(
-    "UPSTREAM_REPO", "https://github.com/"
-)
+    "UPSTREAM_REPO", "https://github.com/")
 HEROKU_URL = fetch_heroku_git_url(HEROKU_API_KEY, HEROKU_APP_NAME)
