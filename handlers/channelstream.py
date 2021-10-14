@@ -258,7 +258,7 @@ async def m_cb(b, cb):
             await cb.answer("الدردشة ليست متصلة أو قيد التشغيل بالفعل", show_alert=True)
         else:
             callsmusic.pytgcalls.resume_stream(chet_id)
-            await cb.answer(""الموسيقى مستأنفة!")
+            await cb.answer("الموسيقى مستأنفة!")
     elif type_ == "cpuse":
         if (chet_id not in callsmusic.pytgcalls.active_calls) or (
             callsmusic.pytgcalls.active_calls[chet_id] == "paused"
