@@ -36,7 +36,7 @@ async def addchannel(client, message):
         print(e)
         await message.reply_text(
             f"<b> 🛑 خطأ في انتظار الفيضان 🛑 \ n \ n تعذر على المستخدم {user.first_name} الانضمام إلى مجموعتك بسبب كثرة طلبات الانضمام إلى userbot."
-            "\ n \ أو إضافة المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
+           +f"\ n \ أو إضافة المساعد يدويًا إلى مجموعتك وحاول مرة أخرى </ b>",
         )
         return
     await message.reply_text(
@@ -94,7 +94,7 @@ async def addcchannel(client, message):
         invitelink = await client.export_chat_invite_link(chid)
     except:
         await message.reply_text(
-            ""<b> قم بترقيتي كمسؤول المجموعة أولاً! </ b>",
+            "<b> قم بترقيتي كمسؤول المجموعة أولاً! </ b>",
         )
         return
 
