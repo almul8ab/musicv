@@ -440,7 +440,7 @@ async def play(_, message: Message):
     except:
         for administrator in administrators:
             if administrator == message.from_user.id:
-                if message.chat.title.startswith("قناه الاغاني: "):
+                if message.chat.title.startswith("channel music "):
                     await lel.edit(
                         f"<b>🎸 please add the userbot to your channel first.</b>",
                     )
@@ -451,7 +451,7 @@ async def play(_, message: Message):
                    await lel.edit(
                         "<b> 🦹🏻 لاستخدامي ، يجب أن أكون مسؤولاً مع الأذونات: \ n \ n »_🍥_ حذف الرسائل __ \ n» 🗼 __ حظر المستخدمين __ \ n »__ 🎐مستخدمو AdAd __ \ n» __ 🎸__إدارة الدردشة الصوتية __ \ n \ n * * ثم اكتب / أعد التحميل </ b>",
                     )
-                    return
+                    
                 try:
                     await USER.join_chat(invitelink)
                     await USER.send_message(
@@ -466,7 +466,7 @@ async def play(_, message: Message):
                     # print(e)
                     await lel.edit(
                         f"<b>🎸 Flood Wait Error 🎸 \n\لا يمكن لـ الحساب المساعد الانضمام إلى هذه المجموعة بسبب العديد من طلبات الانضمام إلى userbot."
-                        f"\n\nor add @{ASSISTANT_NAME} to this group manually then try again.</b>",
+                       +f"\n\nor add @{ASSISTANT_NAME} to this group manually then try again.</b>",
                     )
     try:
         await USER.get_chat(chid)
