@@ -507,7 +507,7 @@ async def play(_, message: Message):
 
         except Exception as e:
             await lel.edit(
-                ""لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
+                "لم يتم العثور على الأغنية ، يرجى إعطاء اسم أغنية صالح"
             )
             print(str(e))
             return
