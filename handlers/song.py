@@ -24,6 +24,18 @@ from config import BOT_USERNAME as bn
 from helpers.decorators import humanbytes
 from helpers.filters import command
 
+ydl_opts = {
+    "format": "bestaudio/best",
+    "writethumbnail": True,
+    "postprocessors": [
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }
+    ],
+}
+
 
 @Client.on_message(command(["song", f"song@{bn}"]) & ~filters.edited)
 def song(_, message):
@@ -182,17 +194,6 @@ def time_formatter(milliseconds: int) -> str:
     return tmp[:-2]
 
 
-ydl_opts = {
-    "format": "bestaudio/best",
-    "writethumbnail": True,
-    "postprocessors": [
-        {
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }
-    ],
-}
 
 
 def get_file_extension_from_url(url):
