@@ -34,7 +34,7 @@ BACK_BUTTON = InlineKeyboardMarkup([[InlineKeyboardButton("🏡 ", callback_data
 
 # remove the ( # ) if you want the auto del cmd feature is on
 
-@Client.on_message(command(["reload", f"reload@{BOT_USERNAME}"]) & other_filters)
+@Client.on_message(command(["reload", f"reload@{BOT_USERNAME}"])  & filters.group & ~filters.edited)
 async def update_admin(client, message):
     global admins
     new_admins = []
@@ -46,7 +46,7 @@ async def update_admin(client, message):
 
 
 # Control Menu Of Player
-@Client.on_message(command(["control", f"control@{BOT_USERNAME}"]) & other_filters)
+@Client.on_message(command(["control", f"control@{BOT_USERNAME}"])  & filters.group & ~filters.edited)
 @errors
 @authorized_users_only
 async def controlset(_, message: Message):
@@ -90,7 +90,7 @@ async def controlset(_, message: Message):
     )
 
 
-@Client.on_message(command(["pause", f"pause@{BOT_USERNAME}"]) & other_filters)
+@Client.on_message(command(["pause", f"pause@{BOT_USERNAME}"])  & filters.group & ~filters.edited)
 @errors
 @authorized_users_only
 async def pause(_, message: Message):
@@ -290,7 +290,7 @@ async def cbskip(_, query: CallbackQuery):
 # ban & unban function
 
 
-@Client.on_message(filters.command("b", COMMAND_PREFIXES))
+@Client.on_message(command("b")  & filters.group & ~filters.edited)
 @authorized_users_only
 async def ban_user(_, message):
     is_admin = await admin_check(message)
@@ -318,7 +318,7 @@ async def ban_user(_, message):
             )
 
 
-@Client.on_message(filters.command("tb", COMMAND_PREFIXES))
+@Client.on_message(command("tb") & filters.group & ~filters.edited)
 @authorized_users_only
 async def temp_ban_user(_, message):
     is_admin = await admin_check(message)
@@ -360,7 +360,7 @@ async def temp_ban_user(_, message):
             )
 
 
-@Client.on_message(filters.command(["ub", "um"], COMMAND_PREFIXES))
+@Client.on_message(command("ub")  & filters.group & ~filters.edited)
 @authorized_users_only
 async def un_ban_user(_, message):
     is_admin = await admin_check(message)
@@ -390,7 +390,7 @@ async def un_ban_user(_, message):
             )
 
 
-@Client.on_message(filters.command("m", COMMAND_PREFIXES))
+@Client.on_message(command("m")  & filters.group & ~filters.edited)
 async def mute_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:
@@ -419,7 +419,7 @@ async def mute_user(_, message):
             )
 
 
-@Client.on_message(filters.command("tm", COMMAND_PREFIXES))
+@Client.on_message(command("tm")  & filters.group & ~filters.edited)
 async def temp_mute_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:
