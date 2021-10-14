@@ -76,11 +76,6 @@
             "required": false,
             "value": "kurd_bots"
         },
-"AMORT_NAME": {
-            "description": "fill with the nickname of your telegram account",
-            "required": false,
-            "value": "HAMA_refaat"
-        },
         "GROUP_SUPPORT": {
             "description": "if you have group fill the group username here without @",
             "required": false,
