@@ -269,7 +269,7 @@ async def m_cb(b, cb):
 
             await cb.answer("music paused!")
     elif type_ == "ccls":
-        await cb.answer(قائمة مغلقة")
+        await cb.answer("قائمة مغلقة")
         await cb.message.delete()
 
     elif type_ == "cmenu":
