@@ -663,7 +663,7 @@ async def play(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🎪 ** Name: ** [{title [: 80]}] ({url}) \ n🗼 ** المدة: **` {duration} `\ n🍥 ** طلب من: ** {message.from_user.mention}",
+            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\n \n🎪 ** Name: ** [{title [: 80]}] ({url}) \n🗼 ** المدة: **` {duration} `\n🍥 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
     else:
@@ -682,7 +682,7 @@ async def play(_, message: Message):
             return
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 **الاسم:** [{title[:80]}]({url})\n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`\n" \
+            caption=f"🎸 **الاسم:** [{title[:80]}]({url}) \n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`\n" 
                    +f"🦹🏻 **بواسطه:** {message.from_user.mention}",
             reply_markup=keyboard
         )
@@ -784,7 +784,7 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🗼 ** الحالة: ** `قيد التشغيل`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n" 
+        caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🗼 ** الحالة: ** `قيد التشغيل`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n", 
                +f"🎪 **طلب بواسطة:** {r_by.mention}",
         reply_markup=keyboard,
         )
@@ -936,8 +936,8 @@ async def ytplay(_, message: Message):
             return
         await message.reply_photo(
             photo="final.png",
-            caption=f"🗼 ** الاسم: ** [{title [: 80]}] ({url})  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🎸 ** الحالة: ** `قيد التشغيل` ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n",  
-                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
+            caption=f"🗼 ** الاسم: ** [{title[:80]}]({url})  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🎸 ** الحالة: ** `قيد التشغيل` ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n",  
+                   +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
             reply_markup=keyboard,
         )
         os.remove("final.png")
