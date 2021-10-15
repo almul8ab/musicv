@@ -1,4 +1,3 @@
-
 import os
 from asyncio.queues import QueueEmpty
 from os import path
@@ -369,10 +368,10 @@ async def m_cb(b, cb):
         marr = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⏹", "ترك"),
-                    InlineKeyboardButton("⏸", "توقف"),
-                    InlineKeyboardButton("▶️", "تشغيل"),
-                    InlineKeyboardButton("⏭", "تخطي")
+                    InlineKeyboardButton("⏹", "leave"),
+                    InlineKeyboardButton("⏸", "pause"),
+                    InlineKeyboardButton("▶️", "playing"),
+                    InlineKeyboardButton("⏭", "skip")
                 
                 ],
                 [
@@ -665,7 +664,7 @@ async def play(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\n \n🎪 ** Name: ** [{title [: 80]}] ({url}) \n🗼 ** المدة: **` {duration} `\n🍥 ** طلب من: ** {message.from_user.mention}",
+            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\n \n🎪 ** Name: ** [{title[:80]}]({url}) \n🗼 ** المدة: **` {duration} `\n🍥 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
     else:
@@ -786,7 +785,7 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** الاسم: ** [{title[:80]}]({url}) ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🗼 ** الحالة: ** `قيد التشغيل`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n", 
+        caption=f"🎸 ** الاسم: ** [{title[:80]}]({url}) \n🍥 ** Duration: ** `{duration}`\n🗼 ** الحالة: ** `قيد التشغيل` \n", 
                +f"🎪 **طلب بواسطة:** {r_by.mention}",
         reply_markup=keyboard,
         )
