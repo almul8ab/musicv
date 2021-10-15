@@ -274,7 +274,7 @@ async def p_cb(b, cb):
 async def m_cb(b, cb):
     global que   
     if (
-        cb.message.chat.title.startswith("Channel Music : ")
+        cb.message.chat.title.startswith("قناه الاغاني : ")
         and chat.title[14:].isnumeric()
     ):
         chet_id = int(chat.title[13:])
@@ -374,7 +374,7 @@ async def m_cb(b, cb):
                 
                 ],
                 [
-                    InlineKeyboardButton("🎸︙حفض في قائمه التشغيل", "playlist"),
+                    InlineKeyboardButton("🎸︙اضافه الى قائمه الانتظار", "playlist"),
                 
                 ],
                 [       
@@ -395,7 +395,7 @@ async def m_cb(b, cb):
             if callsmusic.queues.is_empty(chet_id):
                 callsmusic.pytgcalls.leave_group_call(chet_id)
 
-                await cb.message.edit("•لا مزيد من قائمة التشغيل \ n • مغادرة الدردشة الصوتية")
+                await cb.message.edit("•لا مزيد من قائمة الانتظار \ n • مغادرة الدردشة الصوتية")
             else:
                 callsmusic.pytgcalls.change_stream(
                     chet_id, callsmusic.queues.get(chet_id)["file"]
@@ -442,7 +442,7 @@ async def play(_, message: Message):
             if administrator == message.from_user.id:
                 if message.chat.title.startswith("channel music "):
                     await lel.edit(
-                        f"<b>🎸 please add the userbot to your channel first.</b>",
+                        f"<b>🎸 الرجاء إضافة الحساب المساعد إلى قناتك أولاً.</b>",
                     )
                     pass
                 try:
@@ -465,8 +465,8 @@ async def play(_, message: Message):
                 except Exception:
                     # print(e)
                     await lel.edit(
-                        f"<b>🎸 Flood Wait Error 🎸 \n\لا يمكن لـ الحساب المساعد الانضمام إلى هذه المجموعة بسبب العديد من طلبات الانضمام إلى userbot."
-                       +f"\n\nor add @{ASSISTANT_NAME} to this group manually then try again.</b>",
+                        f"<b>🎸 حدث خطأ 🎸 \n\لا يمكن لـ الحساب المساعد الانضمام إلى هذه المجموعة بسبب العديد من طلبات الانضمام إلى."
+                       +f"\n\او اضف @{ASSISTANT_NAME} لهذه المجموعة يدويًا ثم حاول مرة أخرى.</b>",
                     )
     try:
         await USER.get_chat(chid)
@@ -618,7 +618,7 @@ async def play(_, message: Message):
             return
             # hama project
         except:
-            await lel.edit("__no more results to choose, starting to playing...__")
+            await lel.edit("__لا مزيد من النتائج للاختيار ، بدء التشغيل...__")
                         
             # print(results)
             try:
@@ -705,7 +705,7 @@ async def lol_cb(b, cb):
     if cb.from_user.id != useer_id:
         await cb.answer("🦹🏻 آسف ، هذا ليس لك !", show_alert=True)
         return
-    #await cb.message.edit("🔁 **processing...**")
+    #await cb.message.edit("🔁 **يتم المعالجة...**")
     x = int(x)
     try:
         useer_name = cb.message.reply_to_message.from_user.first_name
@@ -784,7 +784,7 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) \ n🍥 ** Duration: ** `{duration}` \ n🗼 ** الحالة: ** `قيد التشغيل` \ n" \
+        caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🗼 ** الحالة: ** `قيد التشغيل`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n" 
                +f"🎪 **طلب بواسطة:** {r_by.mention}",
         reply_markup=keyboard,
         )
@@ -839,8 +839,8 @@ async def ytplay(_, message: Message):
                 except Exception:
                     # print(e)
                     await lel.edit(
-                        f"🎸 **Flood Wait Error** 🎸 \n\n**{user.first_name} can't join this group due to many join requests for userbot.**"
-                        f"\n\n**or add @{ASSISTANT_NAME} to this group manually then try again.**",
+                        f"🎸 ** حدث خطاء** 🎸 \ n \ n ** لا يمكن لـ {user.first_name} الانضمام إلى هذه المجموعة بسبب العديد من طلبات الانضمام .**"
+                        f"\n\n**او اضف @{ASSISTANT_NAME} لهذه المجموعة يدويًا ثم حاول مرة أخرى.**",
                     )
     try:
         await USER.get_chat(chid)
@@ -936,7 +936,7 @@ async def ytplay(_, message: Message):
             return
         await message.reply_photo(
             photo="final.png",
-            caption=f"🗼 ** الاسم: ** [{title [: 80]}] ({url}) \ n🍥 ** Duration: ** `{duration}` \ n🎸 ** الحالة: ** `قيد التشغيل` \ n" \
+            caption=f"🗼 ** الاسم: ** [{title [: 80]}] ({url})  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🎸 ** الحالة: ** `قيد التشغيل` ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n" 
                   +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
             reply_markup=keyboard,
         )
