@@ -682,8 +682,8 @@ async def play(_, message: Message):
             return
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 **الاسم:** [{title[:80]}]({url})\n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`\n" \
-                   +f"🦹🏻 **بواسطه:** {message.from_user.mention}",
+             caption=f"🗼 ** الاسم: **  \n┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🍥 ** الوقت: ** `{duration}` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🎸 ** الحالة: ** `قيد التشغيل`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n" 
+                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
             reply_markup=keyboard
         )
         os.remove("final.png")
@@ -765,8 +765,8 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🗼 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** الوقت: **` {duration} `\ n🎪 ** طلب من: ** {r_by.mention}",
-        reply_markup=keyboard,
+       caption=f"🗼 ** الاسم: **  \n┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🍥 ** الوقت: ** `{duration}` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🎸 ** الحالة: ** `قيد التشغيل`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n" 
+                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
         )
     else:
         que[chat_id] = []
