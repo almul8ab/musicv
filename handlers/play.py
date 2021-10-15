@@ -663,8 +663,8 @@ async def play(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🎪 ** Name: ** [{title [: 80]}] ({url}) \ n🗼 ** المدة: **` {duration} `\ n🍥 ** طلب من: ** {message.from_user.mention}",
-            reply_markup=keyboard
+            caption=f"🗼 ** الاسم: **  \n┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🍥 ** الوقت: ** `{duration}` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🎸 ** الحالة: ** `قيد التشغيل`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n" 
+                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
         )
     else:
         chat_id = get_chat_id(message.chat)
@@ -784,8 +784,8 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** الاسم: ** \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🍥 ** الوقت: ** `{duration}` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🗼 ** الحالة: ** `قيد التشغيل` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n" 
-               +f"🎪 **طلب بواسطة:** {r_by.mention}",
+       caption=f"🗼 ** الاسم: **  \n┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🍥 ** الوقت: ** `{duration}` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🎸 ** الحالة: ** `قيد التشغيل`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n" 
+                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
         reply_markup=keyboard,
         )
     if path.exists("final.png"):
@@ -917,8 +917,8 @@ async def ytplay(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ 🗼n🏷 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {message.from_user.mention}",
-            reply_markup=keyboard
+             caption=f"🗼 ** الاسم: **  \n┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🍥 ** الوقت: ** `{duration}` \n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n 🎸 ** الحالة: ** `قيد التشغيل`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n" 
+                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
         )
     else:
         chat_id = get_chat_id(message.chat)
