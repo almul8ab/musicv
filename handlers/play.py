@@ -740,10 +740,10 @@ async def lol_cb(b, cb):
     keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸︙قائمه التشغيل  ", callback_data="menu"),
+                    InlineKeyboardButton("🎸︙قائمه الانتضار  ", callback_data="menu"),
                     InlineKeyboardButton("🔻الغاء", callback_data="cls"),
                 ],[
-                    InlineKeyboardButton("🎪القناه", url=f"https://t.me/{UPDATES_CHANNEL}")
+                    InlineKeyboardButton("  🐉: السورس ", url=f"https://t.me/{UPDATES_CHANNEL}")
                 ],
             ]
     )
