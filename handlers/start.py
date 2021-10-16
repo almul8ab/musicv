@@ -100,7 +100,7 @@ async def help(client: Client, message: Message):
             [
                 [
                     InlineKeyboardButton(
-                        text="❔ HOW TO USE ME", callback_data="cbguide"
+                        text="شرح الاستخدام", callback_data="cbguide"
                     )
                 ]
             ]
@@ -114,7 +114,7 @@ async def help_(client: Client, message: Message):
 
 **في هذه القائمة ، يمكنك فتح العديد من قوائم الأوامر المتاحة ، وفي كل قائمة أوامر يوجد أيضًا شرح موجز لكل أمر**
 
-🎪 __ بدعم من {BOT_NAME} A.I__""",
+🎪""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
