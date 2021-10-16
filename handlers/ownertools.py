@@ -36,7 +36,7 @@ async def botstats(_, message: Message):
     disk_usage = psutil.disk_usage('/').percent
     total_users = await db.total_users_count()
     await message.reply_text(
-        text=f"**📊 stats of @{BOT_USERNAME}** \n\n**🤖 bot version:** `v6.5` \n\n**🙎🏼 total users:** \n » **on bot pm:** `{total_users}` \n\n**💾 disk usage:** \n » **disk space:** `{total}` \n » **used:** `{used}({disk_usage}%)` \n » **free:** `{free}` \n\n**🎛 hardware usage:** \n » **CPU usage:** `{cpu_usage}%` \n » **RAM usage:** `{ram_usage}%`",
+        text=f"** 📊 stats of @ {BOT_USERNAME} ** \ n \ n ** 🤖 إصدار الروبوت: **` v6.5` \ n \ n ** 🙎🏼 إجمالي المستخدمين: ** \ n »** على bot pm : ** `{total_users}` \ n \ n ** 💾 استخدام القرص: ** \ n »** مساحة القرص: **` {total} `\ n» ** used: ** `{used} ({ disk_usage}٪) `\ n» ** مجاني: ** `{free}` \ n \ n ** 🎛 استخدام الأجهزة: ** \ n »** استخدام وحدة المعالجة المركزية: **` {cpu_usage}٪ `\ n» ** استخدام ذاكرة الوصول العشوائي: ** `{ram_usage}٪`",
         parse_mode="Markdown",
         quote=True
     )
