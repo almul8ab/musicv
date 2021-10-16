@@ -932,7 +932,7 @@ async def ytplay(_, message: Message):
         try:
             callsmusic.pytgcalls.join_group_call(chat_id, file_path)
         except:
-            await lel.edit("🎸 **voice chat not found**\n\n» please turn on the voice chat first")
+            await lel.edit("🎸 ** لم يتم العثور على الدردشة الصوتية ** \ n \ n »الرجاء تشغيل الدردشة الصوتية أولاً")
             return
         await message.reply_photo(
             photo="final.png",
