@@ -56,14 +56,14 @@ async def stream(_, message: Message):
         position = await queues.put(message.chat.id, file=file_path)
         await message.reply_photo(
             photo=f"{QUE_IMG}",
-            caption=f"🗼 **تعقب تمت إضافته إلى قائمة الانتظار »** `{position}`\n\n🎸 **اسم:** {title[:50]}\n🗼 **دقاق:** `{duration}`\n🦹🏻 **طلب من قبل:** {costumer}",
+            caption=f"🗼 **تعقب تمت إضافته إلى قائمة الانتظار »** `{position}`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n🎸 **اسم:** {title[:50]}\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n🗼 **دقاق:** `{duration}` \n┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n🦹🏻 **طلب من قبل:** {costumer}",
             reply_markup=keyboard,
         )
     else:
         callsmusic.pytgcalls.join_group_call(message.chat.id, file_path)
         await message.reply_photo(
             photo=f"{AUD_IMG}",
-            caption=f"🎸 **اسم:** {title[:50]}\n🍥 **دقاق:** `{duration}`\n🗼 **حالة:** `تشغيل الأغنية`\n" \
+            caption=f"🎸 **اسم:** {title[:50]}\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n🍥 **دقاق:** `{duration}`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n🗼 **حالة:** `تشغيل الأغنية`\n ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉\n" \
                    +f"🦹🏻 **طلب من قبل:** {costumer}",
             reply_markup=keyboard,
         )
