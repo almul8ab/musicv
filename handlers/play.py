@@ -25,7 +25,6 @@ from config import (
 from downloaders import youtube
 from helpers.admins import get_administrators
 from helpers.channelmusic import get_chat_id
-
 from helpers.decorators import authorized_users_only
 from helpers.filters import command, other_filters
 from helpers.gets import get_file_name
@@ -368,10 +367,10 @@ async def m_cb(b, cb):
         marr = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⏹", "leave"),
-                    InlineKeyboardButton("⏸", "pause"),
-                    InlineKeyboardButton("▶️", "playing"),
-                    InlineKeyboardButton("⏭", "skip")
+                    InlineKeyboardButton("⏹", "ترك"),
+                    InlineKeyboardButton("⏸", "توقف"),
+                    InlineKeyboardButton("▶️", "تشغيل"),
+                    InlineKeyboardButton("⏭", "تخطي")
                 
                 ],
                 [
@@ -450,7 +449,7 @@ async def play(_, message: Message):
                     invitelink = await _.export_chat_invite_link(chid)
                 except:
                    await lel.edit(
-                        "<b> 🦹🏻 لاستخدامي ، يجب أن أكون مسؤولاً مع الأذونات: \n \n »_🍥_ حذف الرسائل __ \n» 🗼 __ حظر المستخدمين __ \n »__ 🎐مستخدمو AdAd __ \n» __ 🎸__إدارة الدردشة الصوتية __ \n\n * * ثم اكتب/ أعد التحميل </b>",
+                        "<b> 🦹🏻 لاستخدامي ، يجب أن أكون مسؤولاً مع الأذونات: \ n \ n »_🍥_ حذف الرسائل __ \ n» 🗼 __ حظر المستخدمين __ \ n »__ 🎐مستخدمو AdAd __ \ n» __ 🎸__إدارة الدردشة الصوتية __ \ n \ n * * ثم اكتب / أعد التحميل </ b>",
                     )
                     
                 try:
@@ -582,7 +581,7 @@ async def play(_, message: Message):
         try:
           results = YoutubeSearch(query, max_results=5).to_dict()
         except:
-          await lel.edit("🍥 **لم يتم اكتشاف اسم الأغنية ** \n \n »** يرجى تقديم اسم الأغنية التي تريد تشغيلها**")
+          await lel.edit("🍥 **لم يتم اكتشاف اسم الأغنية ** \ n \ n »** يرجى تقديم اسم الأغنية التي تريد تشغيلها**")
         # veez project
         try:
             toxxt = "\n"
@@ -634,7 +633,7 @@ async def play(_, message: Message):
                 views = results[0]["views"]
             except Exception as e:
                 await lel.edit(
-                    "🎸 **تعذر العثور على الأغنية التي طلبتها ** \n \n »** يرجى تقديم اسم الأغنية الصحيح أو تضمين اسم الفنان أيضًا**"
+                    "🎸 **تعذر العثور على الأغنية التي طلبتها ** \ n \ n »** يرجى تقديم اسم الأغنية الصحيح أو تضمين اسم الفنان أيضًا**"
                 )
                 print(str(e))
                 return
@@ -664,7 +663,7 @@ async def play(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\n \n🎪 ** Name: ** [{title[:80]}]({url}) \n🗼 ** المدة: **` {duration} `\n🍥 ** طلب من: ** {message.from_user.mention}",
+            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🎪 ** Name: ** [{title [: 80]}] ({url}) \ n🗼 ** المدة: **` {duration} `\ n🍥 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
     else:
@@ -683,7 +682,7 @@ async def play(_, message: Message):
             return
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 **الاسم:** [{title[:80]}]({url}) \n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`" 
+            caption=f"🎸 **الاسم:** [{title[:80]}]({url})\n🍥 **الحاله:** `{duration}`\n🎪 **طلب:** `قيد التشغيل`\n" \
                    +f"🦹🏻 **بواسطه:** {message.from_user.mention}",
             reply_markup=keyboard
         )
@@ -766,7 +765,7 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\n \n🗼 ** Name: ** [{title[:80]}]({url}) \n🍥 ** المدة: **` {duration} `\n🎪 ** طلب من: ** {r_by.mention}",
+        caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ n🗼 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {r_by.mention}",
         reply_markup=keyboard,
         )
     else:
@@ -785,7 +784,7 @@ async def lol_cb(b, cb):
         await b.send_photo(
         chat_id,
         photo="final.png",
-        caption=f"🎸 ** الاسم: ** [{title[:80]}]({url}) \n🍥 ** Duration: ** `{duration}`\n🗼 ** الحالة: ** `قيد التشغيل` \n", 
+        caption=f"🎸 ** الاسم: ** [{title [: 80]}] ({url}) ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🗼 ** الحالة: ** `قيد التشغيل`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n" 
                +f"🎪 **طلب بواسطة:** {r_by.mention}",
         reply_markup=keyboard,
         )
@@ -822,7 +821,7 @@ async def ytplay(_, message: Message):
                     invitelink = await _.export_chat_invite_link(chid)
                 except:
                     await lel.edit(
-                        "🎸 ** لاستخدامي ، يجب أن أكون مسؤولاً مع الأذونات: \n \n »❌ __ حذف الرسائل __ \n» 🍥 __ حظر المستخدمين __ \n »🦹🏻 __إضافة مستخدمين __ \n» 🗼 __إدارة الدردشة الصوتية __ \n \n ** بعد ذلك اكتب إعادة التحميل ****",
+                        "🎸 ** لاستخدامي ، يجب أن أكون مسؤولاً مع الأذونات: \ n \ n »❌ __ حذف الرسائل __ \ n» 🍥 __ حظر المستخدمين __ \ n »🦹🏻 __إضافة مستخدمين __ \ n» 🗼 __إدارة الدردشة الصوتية __ \ n \ n ** بعد ذلك اكتب / إعادة التحميل ****",
                     )
                     return
 
@@ -840,7 +839,7 @@ async def ytplay(_, message: Message):
                 except Exception:
                     # print(e)
                     await lel.edit(
-                        f"🎸 ** حدث خطاء** 🎸 \n \n ** لا يمكن لـ {user.first_name} الانضمام إلى هذه المجموعة بسبب العديد من طلبات الانضمام .**"
+                        f"🎸 ** حدث خطاء** 🎸 \ n \ n ** لا يمكن لـ {user.first_name} الانضمام إلى هذه المجموعة بسبب العديد من طلبات الانضمام .**"
                         f"\n\n**او اضف @{ASSISTANT_NAME} لهذه المجموعة يدويًا ثم حاول مرة أخرى.**",
                     )
     try:
@@ -918,7 +917,7 @@ async def ytplay(_, message: Message):
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
-            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\n \n🏷 ** Name: ** [{title[:80]}]({url}) \n🍥 ** المدة: **` {duration} `\n🎪 ** طلب من: ** {message.from_user.mention}",
+            caption=f"🎸 ** تمت إضافة المقطع الصوتي إلى قائمة الانتظار »**` {position} `\ n \ 🗼n🏷 ** Name: ** [{title [: 80]}] ({url}) \ n🍥 ** المدة: **` {duration} `\ n🎪 ** طلب من: ** {message.from_user.mention}",
             reply_markup=keyboard
         )
     else:
@@ -937,8 +936,8 @@ async def ytplay(_, message: Message):
             return
         await message.reply_photo(
             photo="final.png",
-            caption=f"🗼 ** الاسم: ** [{title[:80]}]({url})  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🎸 ** الحالة: ** `قيد التشغيل` ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n",  
-                   +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
+            caption=f"🗼 ** الاسم: ** [{title [: 80]}] ({url})  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🍥 ** Duration: ** `{duration}`  ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n🎸 ** الحالة: ** `قيد التشغيل` ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉__\n\n" 
+                  +f"🎪 **طلب بواسطة:** {message.from_user.mention}",
             reply_markup=keyboard,
         )
         os.remove("final.png")
