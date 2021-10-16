@@ -6,35 +6,23 @@ import asyncio
 import math
 import os
 import time
+import wget
 from random import randint
 from urllib.parse import urlparse
 
 import aiofiles
 import aiohttp
 import requests
-import wget
-import yt_dlp
+import youtube_dl
+from yt_dlp import YoutubeDL
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import Message
 from youtube_search import YoutubeSearch
-from yt_dlp import YoutubeDL
 
-from config import BOT_USERNAME as bn
-from helpers.decorators import humanbytes
 from helpers.filters import command
-
-ydl_opts = {
-    "format": "bestaudio/best",
-    "writethumbnail": True,
-    "postprocessors": [
-        {
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }
-    ],
-}
+from helpers.decorators import humanbytes
+from config import DURATION_LIMIT, BOT_USERNAME as bn
 
 
 @Client.on_message(command(["song", f"song@{bn}"]) & ~filters.edited)
@@ -247,14 +235,14 @@ async def vsong(client, message):
     except Exception as e:
         print(e)
     try:
-        msg = await message.reply("📥 **downloading video...**")
+        msg = await message.reply("📥 **جاري تحميل الفديو...**")
         with YoutubeDL(ydl_opts) as ytdl:
             ytdl_data = ytdl.extract_info(link, download=True)
             file_name = ytdl.prepare_filename(ytdl_data)
     except Exception as e:
-        return await msg.edit(f"🚫 **error:** {e}")
+        return await msg.edit(f"🚫 *حدث خطأ:** {e}")
     preview = wget.download(thumbnail)
-    await msg.edit("📤 **uploading video...**")
+    await msg.edit("📤 **جاري تحميل الفديو...**")
     await message.reply_video(
         file_name,
         duration=int(ytdl_data["duration"]),
