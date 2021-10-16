@@ -1,27 +1,44 @@
 # Copyright (C) 2021 AmortMusic Project
 
+import json
 import os
 from os import path
+from typing import Callable
 
+import aiofiles
+import aiohttp
+import ffmpeg
 import requests
-from callsmusic import callsmusic
-from callsmusic.callsmusic import client as USER
-from callsmusic.queues import queues
-from config import BOT_USERNAME, DURATION_LIMIT
-from config import UPDATES_CHANNEL as updateschannel
-from config import que
-from converter.converter import convert
-from downloaders import youtube
-from handlers.play import cb_admin_check, generate_cover
-from helpers.admins import get_administrators
-from helpers.decorators import authorized_users_only
-from helpers.errors import DurationLimitError
-from helpers.filters import command, other_filters
-from helpers.gets import get_file_name
+import wget
+from PIL import Image, ImageDraw, ImageFont
 from pyrogram import Client, filters
 from pyrogram.errors import UserAlreadyParticipant
+from pyrogram.types import Voice
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
+from handlers.play import generate_cover
+from handlers.play import cb_admin_check
+from handlers.play import transcode
+from handlers.play import convert_seconds
+from handlers.play import time_to_seconds
+from handlers.play import changeImageSize
+from config import BOT_NAME as bn
+from config import DURATION_LIMIT
+from config import UPDATES_CHANNEL as updateschannel
+from config import que
+from cache.admins import admins as a
+from helpers.errors import DurationLimitError
+from helpers.decorators import errors
+from helpers.admins import get_administrators
+from helpers.channelmusic import get_chat_id
+from helpers.decorators import authorized_users_only
+from helpers.filters import command, other_filters
+from helpers.gets import get_file_name
+from callsmusic import callsmusic
+from callsmusic.callsmusic import client as USER
+from converter.converter import convert
+from downloaders import youtube
+from callsmusic.queues import queues
 
 chat_id = None
 
@@ -91,7 +108,7 @@ def r_ply(type_):
                 InlineKeyboardButton("⏭", "cskip"),
             ],
             [
-                InlineKeyboardButton("🎸 قائمه الاغاني", "cplaylist"),
+                InlineKeyboardButton("🎸 قائمه  الانتضار", "cplaylist"),
             ],
             [InlineKeyboardButton("🔻الغاء", "ccls")],
         ]
@@ -284,7 +301,7 @@ async def m_cb(b, cb):
                     InlineKeyboardButton("⏭", "cskip"),
                 ],
                 [
-                    InlineKeyboardButton("🎸 قائمه الاغاني", "cplaylist"),
+                    InlineKeyboardButton("🎸 اضافه الى قائمه الانتضار ", "cplaylist"),
                 ],
                 [InlineKeyboardButton("🔻الغاء", "ccls")],
             ]
@@ -394,7 +411,7 @@ async def play(_, message: Message):
     message.from_user.id
     text_links = None
     message.from_user.first_name
-    await lel.edit("🔎 **finding...**")
+    await lel.edit("🔎 **جاري البحث...**")
     message.from_user.id
     user_id = message.from_user.id
     message.from_user.first_name
@@ -428,10 +445,10 @@ async def play(_, message: Message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸 القائمه", callback_data="cmenu"),
+                    InlineKeyboardButton("🎸  قائمه الانتضار", callback_data="cmenu"),
                     InlineKeyboardButton("🔻الغاء", callback_data="ccls"),
                 ],
-                [InlineKeyboardButton(text="🗽 القناه", url=f"https://t.me/{updateschannel}")],
+                [InlineKeyboardButton(text="🗽 السورس", url=f"https://t.me/{updateschannel}")],
             ]
         )
         file_name = get_file_name(audio)
@@ -475,7 +492,7 @@ async def play(_, message: Message):
         keyboard = InlineKeyboardMarkup(
           [
               [
-                  InlineKeyboardButton("🎸 القائمه", callback_data="cmenu"),
+                  InlineKeyboardButton("🎸  قائمه الانتضار", callback_data="cmenu"),
                   InlineKeyboardButton("🔻الغاء", callback_data="ccls")
               ],[
                   InlineKeyboardButton("🗽 القناه", url=f"https://t.me/{updateschannel}")
@@ -517,7 +534,7 @@ async def play(_, message: Message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🎸 القائمه ", callback_data="cmenu"),
+                    InlineKeyboardButton("🎸  قائمه الانتضار ", callback_data="cmenu"),
                     InlineKeyboardButton("🔻الغاء", callback_data="ccls")
                 ],[
                     InlineKeyboardButton("القناه", url=f"https://t.me/{updateschannel}")
