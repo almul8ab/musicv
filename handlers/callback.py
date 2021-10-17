@@ -255,7 +255,7 @@ async def cbguide(_, query: CallbackQuery):
 
 1.) أولا، إضافة لي إلى مجموعتك.
 2.) ثم ترقية لي كمسؤول وإعطاء جميع الأذونات باستثناء المشرف مجهول.
-3.) إضافة @{ASSISTANT_NAME} إلى مجموعتك أو اكتب/userbotjoin لدعوتها.
+3.) إضافة @{ASSISTANT_NAME} إلى مجموعتك أو اكتب  /userbotjoin  لدعوتها.
 4.) تشغيل الدردشة الصوتية أولا قبل البدء في تشغيل الموسيقى. _""",
         reply_markup=InlineKeyboardMarkup(
             [
